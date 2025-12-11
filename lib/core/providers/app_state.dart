@@ -12,7 +12,8 @@ class AppState extends ChangeNotifier {
   List<Book> _books = [];
   List<Book> _wishlist = [];
   List<CartItem> _cart = [];
-  List<BookTransaction> _transactions = [];
+  List<BookTransaction> _transactions = []; // User's own transactions
+  List<BookTransaction> _allTransactions = []; // All platform transactions for dashboard
   String _searchQuery = '';
   String? _selectedCategory;
   bool _isLoading = false;
@@ -26,6 +27,7 @@ class AppState extends ChangeNotifier {
   List<Book> get wishlist => _wishlist;
   List<CartItem> get cart => _cart;
   List<BookTransaction> get transactions => _transactions;
+  List<BookTransaction> get allTransactions => _allTransactions;
   String get searchQuery => _searchQuery;
   String? get selectedCategory => _selectedCategory;
   bool get isLoading => _isLoading;
@@ -159,6 +161,19 @@ class AppState extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error loading transactions: $e');
+    }
+  }
+
+  /// Load ALL platform transactions for dashboard
+  Future<void> loadAllTransactions() async {
+    try {
+      final transData = await SupabaseService.instance.getAllTransactions();
+      if (transData.isNotEmpty) {
+        _allTransactions = transData.map((data) => BookTransaction.fromSupabase(data)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error loading all transactions: $e');
     }
   }
 
@@ -536,14 +551,14 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // Dashboard data
-  double get totalSales => _transactions
+  // Dashboard data - uses ALL platform transactions
+  double get totalSales => _allTransactions
     .where((t) => t.status == TransactionStatus.completed)
     .fold(0, (sum, t) => sum + t.totalAmount);
 
   Map<String, double> get salesByCategory {
     final Map<String, double> result = {};
-    for (final transaction in _transactions.where((t) => t.status == TransactionStatus.completed)) {
+    for (final transaction in _allTransactions.where((t) => t.status == TransactionStatus.completed)) {
       for (final item in transaction.items) {
         result[item.book.category] = (result[item.book.category] ?? 0) + (item.book.price * item.quantity);
       }
@@ -553,7 +568,7 @@ class AppState extends ChangeNotifier {
 
   Book? get bestSellingBook {
     final Map<String, int> salesCount = {};
-    for (final transaction in _transactions.where((t) => t.status == TransactionStatus.completed)) {
+    for (final transaction in _allTransactions.where((t) => t.status == TransactionStatus.completed)) {
       for (final item in transaction.items) {
         salesCount[item.book.id] = (salesCount[item.book.id] ?? 0) + item.quantity;
       }
@@ -569,7 +584,7 @@ class AppState extends ChangeNotifier {
     
     for (int i = 6; i >= 0; i--) {
       final date = DateTime(now.year, now.month, now.day - i);
-      final dailyTotal = _transactions
+      final dailyTotal = _allTransactions
         .where((t) => 
           t.status == TransactionStatus.completed &&
           t.date.year == date.year &&
@@ -583,9 +598,9 @@ class AppState extends ChangeNotifier {
     return result;
   }
 
-  int get totalTransactions => _transactions.length;
-  int get completedTransactions => _transactions.where((t) => t.status == TransactionStatus.completed).length;
-  int get pendingTransactions => _transactions.where((t) => t.status == TransactionStatus.pending).length;
+  int get totalTransactions => _allTransactions.length;
+  int get completedTransactions => _allTransactions.where((t) => t.status == TransactionStatus.completed).length;
+  int get pendingTransactions => _allTransactions.where((t) => t.status == TransactionStatus.pending).length;
 }
 
 class AppStateProvider extends InheritedNotifier<AppState> {

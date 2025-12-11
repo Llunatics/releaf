@@ -491,6 +491,15 @@ class SupabaseService {
 
   // ==================== DASHBOARD ANALYTICS ====================
 
+  /// Get ALL platform transactions for dashboard (not filtered by user)
+  Future<List<Map<String, dynamic>>> getAllTransactions() async {
+    final response = await client
+        .from('transactions')
+        .select('*, transaction_items(*)')
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
   /// Get total sales for current user's books
   Future<Map<String, dynamic>> getDashboardStats() async {
     final userId = currentUser?.id;

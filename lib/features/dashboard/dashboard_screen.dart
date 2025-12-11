@@ -14,6 +14,15 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Load all platform transactions for dashboard
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppStateProvider.of(context).loadAllTransactions();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
@@ -27,8 +36,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // Refresh data
-              setState(() {});
+              // Refresh data - reload all transactions
+              appState.loadAllTransactions();
             },
             icon: const Icon(Icons.refresh_rounded),
           ),
