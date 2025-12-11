@@ -197,43 +197,45 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // Account Section
-                  _buildSectionTitle(appState.tr('account'), textPrimary),
-                  const SizedBox(height: 14),
-                  
-                  _buildSettingsCard([
-                    _buildNavigationItem(
-                      icon: Icons.person_outline_rounded,
-                      title: appState.tr('edit_profile'),
-                      subtitle: appState.language == 'id' ? 'Ubah info pribadi' : 'Update your personal info',
-                      cardColor: cardColor,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      onTap: () => _showEditProfile(context, isDark, textPrimary, textSecondary, cardColor, borderColor, appState),
-                    ),
-                    _buildDivider(borderColor),
-                    _buildNavigationItem(
-                      icon: Icons.location_on_outlined,
-                      title: appState.language == 'id' ? 'Alamat' : 'Addresses',
-                      subtitle: appState.language == 'id' ? 'Kelola alamat pengiriman' : 'Manage shipping addresses',
-                      cardColor: cardColor,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      onTap: () => _showAddresses(context, isDark, textPrimary, textSecondary, cardColor, borderColor),
-                    ),
-                    _buildDivider(borderColor),
-                    _buildNavigationItem(
-                      icon: Icons.payment_rounded,
-                      title: appState.language == 'id' ? 'Metode Pembayaran' : 'Payment Methods',
-                      subtitle: appState.language == 'id' ? 'Kelola opsi pembayaran' : 'Manage payment options',
-                      cardColor: cardColor,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      onTap: () => _showPaymentMethods(context, isDark, textPrimary, textSecondary, cardColor),
-                    ),
-                  ], cardColor, borderColor).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+                  // Account Section - only for logged in users
+                  if (appState.isLoggedIn) ...[
+                    _buildSectionTitle(appState.tr('account'), textPrimary),
+                    const SizedBox(height: 14),
+                    
+                    _buildSettingsCard([
+                      _buildNavigationItem(
+                        icon: Icons.person_outline_rounded,
+                        title: appState.tr('edit_profile'),
+                        subtitle: appState.language == 'id' ? 'Ubah info pribadi' : 'Update your personal info',
+                        cardColor: cardColor,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        onTap: () => _showEditProfile(context, isDark, textPrimary, textSecondary, cardColor, borderColor, appState),
+                      ),
+                      _buildDivider(borderColor),
+                      _buildNavigationItem(
+                        icon: Icons.location_on_outlined,
+                        title: appState.language == 'id' ? 'Alamat' : 'Addresses',
+                        subtitle: appState.language == 'id' ? 'Kelola alamat pengiriman' : 'Manage shipping addresses',
+                        cardColor: cardColor,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        onTap: () => _showAddresses(context, isDark, textPrimary, textSecondary, cardColor, borderColor),
+                      ),
+                      _buildDivider(borderColor),
+                      _buildNavigationItem(
+                        icon: Icons.payment_rounded,
+                        title: appState.language == 'id' ? 'Metode Pembayaran' : 'Payment Methods',
+                        subtitle: appState.language == 'id' ? 'Kelola opsi pembayaran' : 'Manage payment options',
+                        cardColor: cardColor,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        onTap: () => _showPaymentMethods(context, isDark, textPrimary, textSecondary, cardColor),
+                      ),
+                    ], cardColor, borderColor).animate().fadeIn(duration: 300.ms, delay: 200.ms),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
+                  ],
 
                   // Support Section
                   _buildSectionTitle(appState.language == 'id' ? 'Bantuan' : 'Support', textPrimary),
