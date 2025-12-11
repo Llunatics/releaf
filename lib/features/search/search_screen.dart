@@ -133,7 +133,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
                 child: Chip(
                   label: Text(search),
-                  deleteIcon: const Icon(Icons.close, size: 16),
+                  labelStyle: TextStyle(
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close, 
+                    size: 16,
+                    color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                  ),
                   onDeleted: () {},
                   backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
                   side: BorderSide(
