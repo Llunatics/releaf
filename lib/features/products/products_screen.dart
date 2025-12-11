@@ -70,7 +70,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: appState.isLoggedIn ? FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
@@ -80,7 +80,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: const Text('Add Book', style: TextStyle(color: Colors.white)),
-      ).animate().scale(delay: 300.ms, duration: 300.ms),
+      ).animate().scale(delay: 300.ms, duration: 300.ms) : null,
       body: Column(
         children: [
           // Category Filter

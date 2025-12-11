@@ -137,20 +137,22 @@ class ProfileScreen extends StatelessWidget {
                           onTap: () => _showOrdersSheet(context, appState, isDark),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildStatCard(
-                          appState.tr('my_books'),
-                          appState.myListedBooks.length.toString(),
-                          Icons.menu_book_rounded,
-                          const Color(0xFF10B981),
-                          cardColor,
-                          textPrimary,
-                          textSecondary,
-                          borderColor,
-                          onTap: () => _showMyBooksSheet(context, appState, isDark),
+                      if (appState.isLoggedIn) ...[
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildStatCard(
+                            appState.tr('my_books'),
+                            appState.myListedBooks.length.toString(),
+                            Icons.menu_book_rounded,
+                            const Color(0xFF10B981),
+                            cardColor,
+                            textPrimary,
+                            textSecondary,
+                            borderColor,
+                            onTap: () => _showMyBooksSheet(context, appState, isDark),
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
 
@@ -271,28 +273,52 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 32),
 
-                  // Logout Button
+                  // Login/Logout Button
                   SizedBox(
                     width: double.infinity,
                     height: 54,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showLogoutDialog(context, isDark, textPrimary, textSecondary, cardColor, appState),
-                      icon: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
-                      label: Text(
-                        appState.tr('logout'),
-                        style: const TextStyle(
-                          color: Color(0xFFEF4444),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
+                    child: appState.isLoggedIn 
+                      ? OutlinedButton.icon(
+                          onPressed: () => _showLogoutDialog(context, isDark, textPrimary, textSecondary, cardColor, appState),
+                          icon: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444)),
+                          label: Text(
+                            appState.tr('logout'),
+                            style: const TextStyle(
+                              color: Color(0xFFEF4444),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            );
+                          },
+                          icon: const Icon(Icons.login_rounded, color: Colors.white),
+                          label: Text(
+                            appState.language == 'id' ? 'Masuk' : 'Sign In',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF3B82F6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
                         ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
                   ).animate().fadeIn(duration: 300.ms, delay: 400.ms),
 
                   const SizedBox(height: 100),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../home/main_screen.dart';
+import '../auth/login_screen.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/services/supabase_service.dart';
+import '../../core/providers/app_state.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,10 +22,26 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(milliseconds: 2500));
+    if (!mounted) return;
+    
+    // Check if user is already logged in
+    final currentUser = SupabaseService.instance.currentUser;
+    Widget destination;
+    
+    if (currentUser != null) {
+      // User is logged in, init session and go to main
+      final appState = AppStateProvider.of(context);
+      await appState.initUserSession(currentUser);
+      destination = const MainScreen();
+    } else {
+      // No user, go to login
+      destination = const LoginScreen();
+    }
+    
     if (mounted) {
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const MainScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => destination,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
