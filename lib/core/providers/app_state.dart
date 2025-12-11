@@ -84,6 +84,22 @@ class AppState extends ChangeNotifier {
     
     // Load saved preferences
     _loadLanguage();
+    
+    // If user already logged in (session restored), load their data
+    if (_currentUser != null) {
+      _loadUserDataOnStartup();
+    }
+  }
+  
+  /// Load user data when app starts with existing session
+  Future<void> _loadUserDataOnStartup() async {
+    await Future.wait([
+      _loadUserProfile(),
+      _loadUserWishlist(),
+      _loadUserCart(),
+      _loadUserTransactions(),
+    ]);
+    notifyListeners();
   }
 
   /// Initialize user session after login
