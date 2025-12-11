@@ -1,0 +1,604 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../models/book.dart';
+import '../models/transaction.dart';
+import '../models/cart_item.dart';
+import '../data/dummy_data.dart';
+import '../services/supabase_service.dart';
+
+class AppState extends ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.light;
+  List<Book> _books = [];
+  List<Book> _wishlist = [];
+  List<CartItem> _cart = [];
+  List<BookTransaction> _transactions = [];
+  String _searchQuery = '';
+  String? _selectedCategory;
+  bool _isLoading = false;
+  String? _error;
+  String _language = 'id'; // Default to Indonesian
+  User? _currentUser;
+  Map<String, dynamic>? _userProfile;
+
+  ThemeMode get themeMode => _themeMode;
+  List<Book> get books => _books;
+  List<Book> get wishlist => _wishlist;
+  List<CartItem> get cart => _cart;
+  List<BookTransaction> get transactions => _transactions;
+  String get searchQuery => _searchQuery;
+  String? get selectedCategory => _selectedCategory;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  String get language => _language;
+  User? get currentUser => _currentUser;
+  Map<String, dynamic>? get userProfile => _userProfile;
+  bool get isLoggedIn => _currentUser != null;
+
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+
+  double get cartTotal => _cart.fold(0, (sum, item) => sum + (item.book.price * item.quantity));
+  int get cartItemCount => _cart.fold(0, (sum, item) => sum + item.quantity);
+
+  /// Get books listed by current user
+  List<Book> get myListedBooks {
+    if (_currentUser == null) return [];
+    return _books.where((book) => book.sellerId == _currentUser!.id).toList();
+  }
+
+  List<Book> get filteredBooks {
+    List<Book> result = _books;
+    
+    if (_selectedCategory != null && _selectedCategory!.isNotEmpty) {
+      result = result.where((book) => book.category == _selectedCategory).toList();
+    }
+    
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      result = result.where((book) =>
+        book.title.toLowerCase().contains(query) ||
+        book.author.toLowerCase().contains(query) ||
+        book.category.toLowerCase().contains(query)
+      ).toList();
+    }
+    
+    return result;
+  }
+
+  AppState() {
+    _initializeData();
+  }
+
+  void _initializeData() {
+    // Check current auth state
+    _currentUser = SupabaseService.instance.currentUser;
+    
+    // Load dummy data immediately for instant display
+    _books = DummyData.books;
+    _transactions = DummyData.transactions;
+    
+    // Then try to load from Supabase in background
+    _loadFromSupabase();
+    
+    // Load saved preferences
+    _loadLanguage();
+  }
+
+  /// Initialize user session after login
+  Future<void> initUserSession(User user) async {
+    _currentUser = user;
+    notifyListeners();
+    
+    // Load user's data from Supabase
+    await Future.wait([
+      _loadUserProfile(),
+      _loadUserWishlist(),
+      _loadUserCart(),
+      _loadUserTransactions(),
+    ]);
+    
+    notifyListeners();
+  }
+
+  /// Clear user session on logout
+  void clearUserSession() {
+    _currentUser = null;
+    _userProfile = null;
+    _wishlist = [];
+    _cart = [];
+    _transactions = DummyData.transactions;
+    notifyListeners();
+  }
+
+  Future<void> _loadUserProfile() async {
+    if (_currentUser == null) return;
+    try {
+      _userProfile = await SupabaseService.instance.getProfile(_currentUser!.id);
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+    }
+  }
+
+  Future<void> _loadUserWishlist() async {
+    if (_currentUser == null) return;
+    try {
+      final wishlistData = await SupabaseService.instance.getWishlist();
+      _wishlist = wishlistData.map((item) {
+        final bookData = item['books'] as Map<String, dynamic>;
+        return Book.fromSupabase(bookData);
+      }).toList();
+    } catch (e) {
+      debugPrint('Error loading wishlist: $e');
+    }
+  }
+
+  Future<void> _loadUserCart() async {
+    if (_currentUser == null) return;
+    try {
+      final cartData = await SupabaseService.instance.getCart();
+      _cart = cartData.map((item) {
+        final bookData = item['books'] as Map<String, dynamic>;
+        return CartItem(
+          book: Book.fromSupabase(bookData),
+          quantity: item['quantity'] as int,
+          cartItemId: item['id'] as String,
+        );
+      }).toList();
+    } catch (e) {
+      debugPrint('Error loading cart: $e');
+    }
+  }
+
+  Future<void> _loadUserTransactions() async {
+    if (_currentUser == null) return;
+    try {
+      final transData = await SupabaseService.instance.getTransactions();
+      if (transData.isNotEmpty) {
+        _transactions = transData.map((data) => BookTransaction.fromSupabase(data)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error loading transactions: $e');
+    }
+  }
+
+  Future<void> _loadFromSupabase() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    
+    try {
+      // Try loading from Supabase
+      final booksData = await SupabaseService.instance.getBooks();
+      if (booksData.isNotEmpty) {
+        _books = booksData.map((data) => Book.fromSupabase(data)).toList();
+      }
+      // If Supabase is empty, keep using dummy data (already loaded)
+    } catch (e) {
+      debugPrint('Error loading books from Supabase: $e');
+      // Keep using dummy data on error (already loaded)
+      _error = e.toString();
+    }
+    
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Refresh books from Supabase
+  Future<void> refreshBooks() async {
+    await _loadFromSupabase();
+  }
+
+  Future<void> loadThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('isDarkMode') ?? false;
+    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+
+  Future<void> toggleTheme() async {
+    _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', _themeMode == ThemeMode.dark);
+    notifyListeners();
+  }
+
+  // Language operations
+  Future<void> _loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    _language = prefs.getString('language') ?? 'en';
+    notifyListeners();
+  }
+
+  Future<void> setLanguage(String lang) async {
+    _language = lang;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language', lang);
+    notifyListeners();
+  }
+
+  // Localized strings
+  String tr(String key) {
+    final Map<String, Map<String, String>> translations = {
+      'home': {'en': 'Home', 'id': 'Beranda'},
+      'books': {'en': 'Books', 'id': 'Buku'},
+      'dashboard': {'en': 'Dashboard', 'id': 'Dasbor'},
+      'cart': {'en': 'Cart', 'id': 'Keranjang'},
+      'profile': {'en': 'Profile', 'id': 'Profil'},
+      'search': {'en': 'Search books...', 'id': 'Cari buku...'},
+      'featured': {'en': 'Featured Books', 'id': 'Buku Pilihan'},
+      'new_arrivals': {'en': 'New Arrivals', 'id': 'Baru Datang'},
+      'categories': {'en': 'Categories', 'id': 'Kategori'},
+      'all_books': {'en': 'All Books', 'id': 'Semua Buku'},
+      'add_book': {'en': 'Add Book', 'id': 'Tambah Buku'},
+      'edit_book': {'en': 'Edit Book', 'id': 'Edit Buku'},
+      'delete_book': {'en': 'Delete Book', 'id': 'Hapus Buku'},
+      'wishlist': {'en': 'Wishlist', 'id': 'Favorit'},
+      'orders': {'en': 'Orders', 'id': 'Pesanan'},
+      'settings': {'en': 'Settings', 'id': 'Pengaturan'},
+      'language': {'en': 'Language', 'id': 'Bahasa'},
+      'dark_mode': {'en': 'Dark Mode', 'id': 'Mode Gelap'},
+      'logout': {'en': 'Logout', 'id': 'Keluar'},
+      'login': {'en': 'Login', 'id': 'Masuk'},
+      'register': {'en': 'Register', 'id': 'Daftar'},
+      'email': {'en': 'Email', 'id': 'Email'},
+      'password': {'en': 'Password', 'id': 'Kata Sandi'},
+      'welcome_back': {'en': 'Welcome Back', 'id': 'Selamat Datang'},
+      'sign_in': {'en': 'Sign In', 'id': 'Masuk'},
+      'sign_up': {'en': 'Sign Up', 'id': 'Daftar'},
+      'continue_guest': {'en': 'Continue as Guest', 'id': 'Lanjut sebagai Tamu'},
+      'no_account': {'en': "Don't have an account?", 'id': 'Belum punya akun?'},
+      'have_account': {'en': 'Already have an account?', 'id': 'Sudah punya akun?'},
+      'forgot_password': {'en': 'Forgot Password?', 'id': 'Lupa Kata Sandi?'},
+      'price': {'en': 'Price', 'id': 'Harga'},
+      'condition': {'en': 'Condition', 'id': 'Kondisi'},
+      'author': {'en': 'Author', 'id': 'Penulis'},
+      'description': {'en': 'Description', 'id': 'Deskripsi'},
+      'add_to_cart': {'en': 'Add to Cart', 'id': 'Tambah ke Keranjang'},
+      'buy_now': {'en': 'Buy Now', 'id': 'Beli Sekarang'},
+      'checkout': {'en': 'Checkout', 'id': 'Bayar'},
+      'total': {'en': 'Total', 'id': 'Total'},
+      'empty_cart': {'en': 'Your cart is empty', 'id': 'Keranjang kosong'},
+      'empty_wishlist': {'en': 'Your wishlist is empty', 'id': 'Favorit kosong'},
+      'my_books': {'en': 'My Books', 'id': 'Buku Saya'},
+      'preferences': {'en': 'Preferences', 'id': 'Preferensi'},
+      'notifications': {'en': 'Notifications', 'id': 'Notifikasi'},
+      'account': {'en': 'Account', 'id': 'Akun'},
+      'edit_profile': {'en': 'Edit Profile', 'id': 'Edit Profil'},
+      'help_center': {'en': 'Help Center', 'id': 'Pusat Bantuan'},
+      'about': {'en': 'About', 'id': 'Tentang'},
+      'version': {'en': 'Version', 'id': 'Versi'},
+      'save_changes': {'en': 'Save Changes', 'id': 'Simpan Perubahan'},
+      'cancel': {'en': 'Cancel', 'id': 'Batal'},
+      'delete': {'en': 'Delete', 'id': 'Hapus'},
+      'confirm': {'en': 'Confirm', 'id': 'Konfirmasi'},
+      'success': {'en': 'Success', 'id': 'Berhasil'},
+      'error': {'en': 'Error', 'id': 'Kesalahan'},
+      'loading': {'en': 'Loading...', 'id': 'Memuat...'},
+      'book_added': {'en': 'Book added successfully', 'id': 'Buku berhasil ditambahkan'},
+      'book_updated': {'en': 'Book updated successfully', 'id': 'Buku berhasil diperbarui'},
+      'book_deleted': {'en': 'Book deleted successfully', 'id': 'Buku berhasil dihapus'},
+      'select_language': {'en': 'Select Language', 'id': 'Pilih Bahasa'},
+      'english': {'en': 'English', 'id': 'Inggris'},
+      'indonesian': {'en': 'Indonesian', 'id': 'Indonesia'},
+      'guest_user': {'en': 'Guest User', 'id': 'Pengguna Tamu'},
+      'best_deals': {'en': 'Best Deals', 'id': 'Penawaran Terbaik'},
+      'see_all': {'en': 'See All', 'id': 'Lihat Semua'},
+      'search_preloved': {'en': 'Search preloved books...', 'id': 'Cari buku bekas...'},
+      'all': {'en': 'All', 'id': 'Semua'},
+      'view_details': {'en': 'View Details', 'id': 'Lihat Detail'},
+      'in_cart': {'en': 'In Cart', 'id': 'Di Keranjang'},
+      'out_of_stock': {'en': 'Out of Stock', 'id': 'Stok Habis'},
+      'added_to_cart': {'en': 'Added to cart', 'id': 'Ditambahkan ke keranjang'},
+    };
+    
+    return translations[key]?[_language] ?? translations[key]?['en'] ?? key;
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  void setSelectedCategory(String? category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _searchQuery = '';
+    _selectedCategory = null;
+    notifyListeners();
+  }
+
+  // Wishlist operations with Supabase sync
+  Future<void> toggleWishlist(Book book) async {
+    final isInList = _wishlist.any((b) => b.id == book.id);
+    
+    if (isInList) {
+      _wishlist.removeWhere((b) => b.id == book.id);
+      notifyListeners();
+      
+      // Sync with Supabase if logged in
+      if (_currentUser != null) {
+        try {
+          await SupabaseService.instance.removeFromWishlist(book.id);
+        } catch (e) {
+          debugPrint('Error removing from wishlist: $e');
+        }
+      }
+    } else {
+      _wishlist.add(book);
+      notifyListeners();
+      
+      // Sync with Supabase if logged in
+      if (_currentUser != null) {
+        try {
+          await SupabaseService.instance.addToWishlist(book.id);
+        } catch (e) {
+          debugPrint('Error adding to wishlist: $e');
+        }
+      }
+    }
+  }
+
+  bool isInWishlist(String bookId) {
+    return _wishlist.any((book) => book.id == bookId);
+  }
+
+  // Cart operations with Supabase sync
+  Future<void> addToCart(Book book, {int quantity = 1}) async {
+    final existingIndex = _cart.indexWhere((item) => item.book.id == book.id);
+    if (existingIndex != -1) {
+      _cart[existingIndex] = CartItem(
+        book: book,
+        quantity: _cart[existingIndex].quantity + quantity,
+        cartItemId: _cart[existingIndex].cartItemId,
+      );
+    } else {
+      _cart.add(CartItem(book: book, quantity: quantity));
+    }
+    notifyListeners();
+    
+    // Sync with Supabase if logged in
+    if (_currentUser != null) {
+      try {
+        await SupabaseService.instance.addToCart(book.id, quantity: quantity);
+      } catch (e) {
+        debugPrint('Error adding to cart: $e');
+      }
+    }
+  }
+
+  Future<void> removeFromCart(String bookId) async {
+    final item = _cart.firstWhere((item) => item.book.id == bookId, orElse: () => CartItem(book: Book.empty(), quantity: 0));
+    _cart.removeWhere((item) => item.book.id == bookId);
+    notifyListeners();
+    
+    // Sync with Supabase if logged in
+    if (_currentUser != null && item.cartItemId != null) {
+      try {
+        await SupabaseService.instance.removeFromCart(item.cartItemId!);
+      } catch (e) {
+        debugPrint('Error removing from cart: $e');
+      }
+    }
+  }
+
+  Future<void> updateCartItemQuantity(String bookId, int quantity) async {
+    if (quantity <= 0) {
+      await removeFromCart(bookId);
+      return;
+    }
+    final index = _cart.indexWhere((item) => item.book.id == bookId);
+    if (index != -1) {
+      final cartItemId = _cart[index].cartItemId;
+      _cart[index] = CartItem(book: _cart[index].book, quantity: quantity, cartItemId: cartItemId);
+      notifyListeners();
+      
+      // Sync with Supabase if logged in
+      if (_currentUser != null && cartItemId != null) {
+        try {
+          await SupabaseService.instance.updateCartQuantity(cartItemId, quantity);
+        } catch (e) {
+          debugPrint('Error updating cart: $e');
+        }
+      }
+    }
+  }
+
+  Future<void> clearCart() async {
+    _cart.clear();
+    notifyListeners();
+    
+    // Sync with Supabase if logged in
+    if (_currentUser != null) {
+      try {
+        await SupabaseService.instance.clearCart();
+      } catch (e) {
+        debugPrint('Error clearing cart: $e');
+      }
+    }
+  }
+
+  bool isInCart(String bookId) {
+    return _cart.any((item) => item.book.id == bookId);
+  }
+
+  // Transaction operations
+  void addTransaction(BookTransaction transaction) {
+    _transactions.insert(0, transaction);
+    notifyListeners();
+  }
+
+  BookTransaction? createOrderFromCart() {
+    if (_cart.isEmpty) return null;
+    
+    final transaction = BookTransaction(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      items: List.from(_cart),
+      totalAmount: cartTotal,
+      date: DateTime.now(),
+      status: TransactionStatus.pending,
+    );
+    
+    addTransaction(transaction);
+    clearCart();
+    return transaction;
+  }
+
+  // Book CRUD operations with Supabase sync
+  Future<void> addBook(Book book) async {
+    _books.insert(0, book);
+    notifyListeners();
+    
+    // Sync with Supabase if logged in
+    if (_currentUser != null) {
+      try {
+        await SupabaseService.instance.addBook(
+          title: book.title,
+          author: book.author,
+          category: book.category,
+          condition: book.condition.toSupabaseValue(),
+          price: book.price,
+          isbn: book.isbn,
+          description: book.description,
+          originalPrice: book.originalPrice,
+          stock: book.stock,
+          imageUrl: book.imageUrl,
+          publisher: book.publisher,
+          publishYear: book.year,
+          language: book.language,
+          pages: book.pages,
+        );
+        // Refresh to get the actual ID from Supabase
+        await refreshBooks();
+      } catch (e) {
+        debugPrint('Error adding book to Supabase: $e');
+      }
+    }
+  }
+
+  Future<void> updateBook(Book updatedBook) async {
+    final index = _books.indexWhere((book) => book.id == updatedBook.id);
+    if (index != -1) {
+      _books[index] = updatedBook;
+      notifyListeners();
+      
+      // Sync with Supabase if logged in
+      if (_currentUser != null) {
+        try {
+          await SupabaseService.instance.updateBook(
+            bookId: updatedBook.id,
+            title: updatedBook.title,
+            author: updatedBook.author,
+            category: updatedBook.category,
+            condition: updatedBook.condition.toSupabaseValue(),
+            price: updatedBook.price,
+            isbn: updatedBook.isbn,
+            description: updatedBook.description,
+            originalPrice: updatedBook.originalPrice,
+            stock: updatedBook.stock,
+            imageUrl: updatedBook.imageUrl,
+            publisher: updatedBook.publisher,
+            publishYear: updatedBook.year,
+            language: updatedBook.language,
+            pages: updatedBook.pages,
+          );
+        } catch (e) {
+          debugPrint('Error updating book in Supabase: $e');
+        }
+      }
+    }
+  }
+
+  Future<void> deleteBook(String bookId) async {
+    _books.removeWhere((book) => book.id == bookId);
+    _wishlist.removeWhere((book) => book.id == bookId);
+    _cart.removeWhere((item) => item.book.id == bookId);
+    notifyListeners();
+    
+    // Sync with Supabase if logged in
+    if (_currentUser != null) {
+      try {
+        await SupabaseService.instance.deleteBook(bookId);
+      } catch (e) {
+        debugPrint('Error deleting book from Supabase: $e');
+      }
+    }
+  }
+
+  Book? getBookById(String id) {
+    try {
+      return _books.firstWhere((book) => book.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Dashboard data
+  double get totalSales => _transactions
+    .where((t) => t.status == TransactionStatus.completed)
+    .fold(0, (sum, t) => sum + t.totalAmount);
+
+  Map<String, double> get salesByCategory {
+    final Map<String, double> result = {};
+    for (final transaction in _transactions.where((t) => t.status == TransactionStatus.completed)) {
+      for (final item in transaction.items) {
+        result[item.book.category] = (result[item.book.category] ?? 0) + (item.book.price * item.quantity);
+      }
+    }
+    return result;
+  }
+
+  Book? get bestSellingBook {
+    final Map<String, int> salesCount = {};
+    for (final transaction in _transactions.where((t) => t.status == TransactionStatus.completed)) {
+      for (final item in transaction.items) {
+        salesCount[item.book.id] = (salesCount[item.book.id] ?? 0) + item.quantity;
+      }
+    }
+    if (salesCount.isEmpty) return null;
+    final bestId = salesCount.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+    return getBookById(bestId);
+  }
+
+  List<MapEntry<DateTime, double>> get last7DaysSales {
+    final now = DateTime.now();
+    final List<MapEntry<DateTime, double>> result = [];
+    
+    for (int i = 6; i >= 0; i--) {
+      final date = DateTime(now.year, now.month, now.day - i);
+      final dailyTotal = _transactions
+        .where((t) => 
+          t.status == TransactionStatus.completed &&
+          t.date.year == date.year &&
+          t.date.month == date.month &&
+          t.date.day == date.day
+        )
+        .fold(0.0, (sum, t) => sum + t.totalAmount);
+      result.add(MapEntry(date, dailyTotal));
+    }
+    
+    return result;
+  }
+
+  int get totalTransactions => _transactions.length;
+  int get completedTransactions => _transactions.where((t) => t.status == TransactionStatus.completed).length;
+  int get pendingTransactions => _transactions.where((t) => t.status == TransactionStatus.pending).length;
+}
+
+class AppStateProvider extends InheritedNotifier<AppState> {
+  const AppStateProvider({
+    super.key,
+    required AppState state,
+    required super.child,
+  }) : super(notifier: state);
+
+  static AppState of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<AppStateProvider>()!.notifier!;
+  }
+
+  static AppState? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<AppStateProvider>()?.notifier;
+  }
+}
