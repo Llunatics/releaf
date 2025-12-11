@@ -107,37 +107,37 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Stats Cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          appState.tr('wishlist'),
-                          appState.wishlist.length.toString(),
-                          Icons.favorite_rounded,
-                          const Color(0xFFEF4444),
-                          cardColor,
-                          textPrimary,
-                          textSecondary,
-                          borderColor,
-                          onTap: () => _showWishlistSheet(context, appState, isDark),
+                  // Stats Cards - only for logged in users
+                  if (appState.isLoggedIn) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            appState.tr('wishlist'),
+                            appState.wishlist.length.toString(),
+                            Icons.favorite_rounded,
+                            const Color(0xFFEF4444),
+                            cardColor,
+                            textPrimary,
+                            textSecondary,
+                            borderColor,
+                            onTap: () => _showWishlistSheet(context, appState, isDark),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildStatCard(
-                          appState.tr('orders'),
-                          appState.transactions.length.toString(),
-                          Icons.receipt_long_rounded,
-                          const Color(0xFF3B82F6),
-                          cardColor,
-                          textPrimary,
-                          textSecondary,
-                          borderColor,
-                          onTap: () => _showOrdersSheet(context, appState, isDark),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildStatCard(
+                            appState.tr('orders'),
+                            appState.transactions.length.toString(),
+                            Icons.receipt_long_rounded,
+                            const Color(0xFF3B82F6),
+                            cardColor,
+                            textPrimary,
+                            textSecondary,
+                            borderColor,
+                            onTap: () => _showOrdersSheet(context, appState, isDark),
+                          ),
                         ),
-                      ),
-                      if (appState.isLoggedIn) ...[
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildStatCard(
@@ -153,10 +153,10 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ],
-                  ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
+                    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
 
-                  const SizedBox(height: 28),
+                    const SizedBox(height: 28),
+                  ],
 
                   // Preferences Section
                   _buildSectionTitle(appState.tr('preferences'), textPrimary),

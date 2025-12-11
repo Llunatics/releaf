@@ -75,12 +75,11 @@ class AppState extends ChangeNotifier {
     // Check current auth state
     _currentUser = SupabaseService.instance.currentUser;
     
-    // Load dummy data immediately for instant display
-    _books = DummyData.books;
-    // Don't load dummy transactions - only load user's own transactions from Supabase
+    // Start with empty data, load from Supabase
+    _books = [];
     _transactions = [];
     
-    // Then try to load from Supabase in background
+    // Load from Supabase (will use dummy as fallback only if Supabase fails)
     _loadFromSupabase();
     
     // Load saved preferences
@@ -183,15 +182,16 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     
     try {
-      // Try loading from Supabase
+      // Load from Supabase - this is the source of truth
       final booksData = await SupabaseService.instance.getBooks();
-      if (booksData.isNotEmpty) {
-        _books = booksData.map((data) => Book.fromSupabase(data)).toList();
-      }
-      // If Supabase is empty, keep using dummy data (already loaded)
+      _books = booksData.map((data) => Book.fromSupabase(data)).toList();
+      // If Supabase returns empty, that's fine - no books in database
     } catch (e) {
       debugPrint('Error loading books from Supabase: $e');
-      // Keep using dummy data on error (already loaded)
+      // Only use dummy data as fallback when Supabase connection fails
+      if (_books.isEmpty) {
+        _books = DummyData.books;
+      }
       _error = e.toString();
     }
     

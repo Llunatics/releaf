@@ -101,9 +101,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ],
                 ),
-              // Wishlist button - simplified
+              // Wishlist button - only for logged in users
               IconButton(
-                onPressed: () => appState.toggleWishlist(widget.book),
+                onPressed: () {
+                  if (appState.isLoggedIn) {
+                    appState.toggleWishlist(widget.book);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Login untuk menambah wishlist'),
+                        backgroundColor: AppColors.warning,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    );
+                  }
+                },
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -401,10 +414,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
               const SizedBox(width: 16),
-              // Add to Cart Button
+              // Add to Cart Button - only for logged in users
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
+                    if (!appState.isLoggedIn) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Login untuk memesan buku'),
+                          backgroundColor: AppColors.warning,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      );
+                      return;
+                    }
                     appState.addToCart(widget.book, quantity: _quantity);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
