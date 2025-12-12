@@ -380,11 +380,14 @@ class AppState extends ChangeNotifier {
   // Cart operations with Supabase sync
   Future<void> addToCart(Book book, {int quantity = 1}) async {
     final existingIndex = _cart.indexWhere((item) => item.book.id == book.id);
+    String? cartItemId;
+    
     if (existingIndex != -1) {
+      cartItemId = _cart[existingIndex].cartItemId;
       _cart[existingIndex] = CartItem(
         book: book,
         quantity: _cart[existingIndex].quantity + quantity,
-        cartItemId: _cart[existingIndex].cartItemId,
+        cartItemId: cartItemId,
       );
     } else {
       _cart.add(CartItem(book: book, quantity: quantity));
@@ -394,7 +397,18 @@ class AppState extends ChangeNotifier {
     // Sync with Supabase if logged in
     if (_currentUser != null) {
       try {
-        await SupabaseService.instance.addToCart(book.id, quantity: quantity);
+        final newCartItemId = await SupabaseService.instance.addToCart(book.id, quantity: quantity);
+        // Update local cart with the id from Supabase
+        if (existingIndex == -1 && newCartItemId != null) {
+          final idx = _cart.indexWhere((item) => item.book.id == book.id);
+          if (idx != -1) {
+            _cart[idx] = CartItem(
+              book: _cart[idx].book,
+              quantity: _cart[idx].quantity,
+              cartItemId: newCartItemId,
+            );
+          }
+        }
       } catch (e) {
         debugPrint('Error adding to cart: $e');
       }

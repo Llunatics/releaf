@@ -337,7 +337,7 @@ class SupabaseService {
   }
 
   /// Add to cart
-  Future<void> addToCart(String bookId, {int quantity = 1}) async {
+  Future<String?> addToCart(String bookId, {int quantity = 1}) async {
     final userId = currentUser?.id;
     if (userId == null) throw Exception('User not logged in');
 
@@ -354,13 +354,15 @@ class SupabaseService {
       await client.from('cart_items').update({
         'quantity': existing['quantity'] + quantity,
       }).eq('id', existing['id']);
+      return existing['id'] as String;
     } else {
-      // Insert new
-      await client.from('cart_items').insert({
+      // Insert new and return id
+      final result = await client.from('cart_items').insert({
         'user_id': userId,
         'book_id': bookId,
         'quantity': quantity,
-      });
+      }).select('id').single();
+      return result['id'] as String;
     }
   }
 
