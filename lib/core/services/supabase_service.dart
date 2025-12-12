@@ -78,14 +78,54 @@ class SupabaseService {
 
   // ==================== PROFILES ====================
 
-  /// Get user profile
+  /// Get user profile - returns null if not found
   Future<Map<String, dynamic>?> getProfile(String userId) async {
-    final response = await client
-        .from('profiles')
-        .select()
-        .eq('id', userId)
-        .single();
-    return response;
+    try {
+      final response = await client
+          .from('profiles')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+      return response;
+    } catch (e) {
+      print('Error getting profile: $e');
+      return null;
+    }
+  }
+
+  /// Create or update user profile (upsert)
+  Future<Map<String, dynamic>?> ensureProfile({
+    required String userId,
+    String? email,
+    String? fullName,
+  }) async {
+    try {
+      // Check if profile exists
+      final existing = await getProfile(userId);
+      if (existing != null) {
+        return existing;
+      }
+      
+      // Create new profile
+      final response = await client
+          .from('profiles')
+          .insert({
+            'id': userId,
+            'email': email,
+            'full_name': fullName ?? email?.split('@').first ?? 'User',
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .select()
+          .single();
+      
+      print('Profile created for user: $userId');
+      return response;
+    } catch (e) {
+      print('Error ensuring profile: $e');
+      // Try to get existing profile again (might have been created by trigger)
+      return await getProfile(userId);
+    }
   }
 
   /// Update user profile

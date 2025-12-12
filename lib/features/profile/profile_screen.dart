@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/models/book.dart';
 import '../../core/models/transaction.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/services/supabase_service.dart';
+import '../../core/utils/page_transitions.dart';
 import '../auth/login_screen.dart';
 import '../products/add_book_screen.dart';
 
@@ -148,7 +148,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1),
+                    ),
 
                     const SizedBox(height: 28),
                   ],
@@ -188,7 +188,7 @@ class ProfileScreen extends StatelessWidget {
                       textSecondary: textSecondary,
                       onTap: () => _showLanguageOptions(context, isDark, textPrimary, textSecondary, cardColor),
                     ),
-                  ], cardColor, borderColor).animate().fadeIn(duration: 300.ms, delay: 100.ms),
+                  ], cardColor, borderColor),
 
                   const SizedBox(height: 24),
 
@@ -227,7 +227,7 @@ class ProfileScreen extends StatelessWidget {
                         textSecondary: textSecondary,
                         onTap: () => _showPaymentMethods(context, isDark, textPrimary, textSecondary, cardColor),
                       ),
-                    ], cardColor, borderColor).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+                    ], cardColor, borderColor),
 
                     const SizedBox(height: 24),
                   ],
@@ -266,7 +266,7 @@ class ProfileScreen extends StatelessWidget {
                       textSecondary: textSecondary,
                       onTap: () => _showAboutDialog(context, isDark, textPrimary, textSecondary, cardColor),
                     ),
-                  ], cardColor, borderColor).animate().fadeIn(duration: 300.ms, delay: 300.ms),
+                  ], cardColor, borderColor),
 
                   const SizedBox(height: 32),
 
@@ -297,7 +297,7 @@ class ProfileScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              PageTransitions.fade(const LoginScreen()),
                             );
                           },
                           icon: const Icon(Icons.login_rounded, color: Colors.white),
@@ -316,7 +316,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                  ).animate().fadeIn(duration: 300.ms, delay: 400.ms),
+                  ),
 
                   const SizedBox(height: 100),
                 ],
@@ -1670,7 +1670,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                         Navigator.pop(ctx);
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AddBookScreen()),
+                          PageTransitions.slideUp(const AddBookScreen()),
                         );
                       },
                       icon: Container(
@@ -1727,7 +1727,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                 Navigator.pop(ctx);
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const AddBookScreen()),
+                                  PageTransitions.slideUp(const AddBookScreen()),
                                 );
                               },
                               icon: const Icon(Icons.add_rounded, color: Colors.white),
@@ -1876,9 +1876,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                         Navigator.pop(ctx);
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (context) => AddBookScreen(bookToEdit: book),
-                                          ),
+                                          PageTransitions.slideUp(AddBookScreen(bookToEdit: book)),
                                         );
                                       },
                                       icon: Container(

@@ -4,6 +4,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/book.dart';
+import '../../core/utils/page_transitions.dart';
 import '../products/product_detail_screen.dart';
 import '../products/widgets/book_card.dart';
 import '../search/search_screen.dart';
@@ -122,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const ScannerScreen()),
+                              PageTransitions.slideUp(const ScannerScreen()),
                             );
                           },
                         ),
@@ -150,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SearchScreen()),
+                    PageTransitions.fade(const SearchScreen()),
                   );
                 },
                 child: Container(
@@ -331,9 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailScreen(book: books[index]),
-                              ),
+                              PageTransitions.scaleUp(ProductDetailScreen(book: books[index])),
                             );
                           },
                         ),

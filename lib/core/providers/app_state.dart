@@ -93,8 +93,11 @@ class AppState extends ChangeNotifier {
   
   /// Load user data when app starts with existing session
   Future<void> _loadUserDataOnStartup() async {
+    // Ensure profile exists first
+    await _ensureUserProfile();
+    
+    // Then load other data
     await Future.wait([
-      _loadUserProfile(),
       _loadUserWishlist(),
       _loadUserCart(),
       _loadUserTransactions(),
@@ -107,9 +110,11 @@ class AppState extends ChangeNotifier {
     _currentUser = user;
     notifyListeners();
     
-    // Load user's data from Supabase
+    // IMPORTANT: Ensure profile exists in database first
+    await _ensureUserProfile();
+    
+    // Then load user's data from Supabase
     await Future.wait([
-      _loadUserProfile(),
       _loadUserWishlist(),
       _loadUserCart(),
       _loadUserTransactions(),
@@ -128,12 +133,33 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Ensure user profile exists in database
+  Future<void> _ensureUserProfile() async {
+    if (_currentUser == null) return;
+    try {
+      _userProfile = await SupabaseService.instance.ensureProfile(
+        userId: _currentUser!.id,
+        email: _currentUser!.email,
+        fullName: _currentUser!.userMetadata?['full_name'] as String?,
+      );
+      debugPrint('Profile ensured for user: ${_currentUser!.id}');
+    } catch (e) {
+      debugPrint('Error ensuring profile: $e');
+    }
+  }
+
   Future<void> _loadUserProfile() async {
     if (_currentUser == null) return;
     try {
       _userProfile = await SupabaseService.instance.getProfile(_currentUser!.id);
+      // If profile is null, try to ensure it exists
+      if (_userProfile == null) {
+        await _ensureUserProfile();
+      }
     } catch (e) {
       debugPrint('Error loading profile: $e');
+      // Try to create profile if loading fails
+      await _ensureUserProfile();
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/providers/app_state.dart';
+import '../../core/utils/page_transitions.dart';
 import 'register_screen.dart';
 import '../home/main_screen.dart';
 
@@ -52,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
+          PageTransitions.fade(const MainScreen()),
         );
       }
     } catch (e) {
@@ -339,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const MainScreen()),
+                          PageTransitions.fade(const MainScreen()),
                         );
                       },
                       style: OutlinedButton.styleFrom(
@@ -375,7 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                              PageTransitions.slideFromRight(const RegisterScreen()),
                             );
                           },
                           child: const Text(

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/cart_item.dart';
+import '../../core/utils/page_transitions.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
@@ -338,7 +339,7 @@ class CartScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CheckoutScreen()),
+                    PageTransitions.sharedAxis(const CheckoutScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

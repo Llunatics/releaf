@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
@@ -58,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Icons.attach_money_rounded,
                     AppColors.success,
                     isDark,
-                  ).animate().fadeIn(duration: 300.ms).slideX(begin: -0.1),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -68,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Icons.receipt_long_rounded,
                     AppColors.primaryBlue,
                     isDark,
-                  ).animate().fadeIn(duration: 300.ms, delay: 100.ms).slideX(begin: 0.1),
+                  ),
                 ),
               ],
             ),
@@ -82,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Icons.check_circle_rounded,
                     AppColors.success,
                     isDark,
-                  ).animate().fadeIn(duration: 300.ms, delay: 200.ms).slideX(begin: -0.1),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -92,7 +91,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Icons.pending_rounded,
                     AppColors.warning,
                     isDark,
-                  ).animate().fadeIn(duration: 300.ms, delay: 300.ms).slideX(begin: 0.1),
+                  ),
                 ),
               ],
             ),
@@ -105,7 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-            ).animate().fadeIn(duration: 300.ms, delay: 400.ms),
+            ),
             const SizedBox(height: 16),
             Container(
               height: 220,
@@ -122,7 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               child: _buildLineChart(appState, isDark),
-            ).animate().fadeIn(duration: 400.ms, delay: 500.ms).scale(begin: const Offset(0.95, 0.95)),
+            ),
 
             const SizedBox(height: 24),
 
@@ -132,7 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-            ).animate().fadeIn(duration: 300.ms, delay: 600.ms),
+            ),
             const SizedBox(height: 16),
             Container(
               height: 250,
@@ -149,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               child: _buildPieChart(appState, isDark, currencyFormat),
-            ).animate().fadeIn(duration: 400.ms, delay: 700.ms).scale(begin: const Offset(0.95, 0.95)),
+            ),
 
             const SizedBox(height: 24),
 
@@ -159,11 +158,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-            ).animate().fadeIn(duration: 300.ms, delay: 800.ms),
+            ),
             const SizedBox(height: 16),
             if (appState.bestSellingBook != null)
-              _buildBestSellerCard(appState, isDark, currencyFormat)
-                  .animate().fadeIn(duration: 400.ms, delay: 900.ms).slideY(begin: 0.1),
+              _buildBestSellerCard(appState, isDark, currencyFormat),
 
             const SizedBox(height: 24),
 
@@ -173,13 +171,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-            ).animate().fadeIn(duration: 300.ms, delay: 1000.ms),
+            ),
             const SizedBox(height: 16),
-            ...appState.transactions.take(5).toList().asMap().entries.map((entry) {
-              final index = entry.key;
-              final transaction = entry.value;
-              return _buildTransactionItem(transaction, isDark, currencyFormat)
-                  .animate().fadeIn(duration: 300.ms, delay: Duration(milliseconds: 1100 + (index * 100))).slideX(begin: 0.1);
+            ...appState.transactions.take(5).map((transaction) {
+              return _buildTransactionItem(transaction, isDark, currencyFormat);
             }),
 
             const SizedBox(height: 100),

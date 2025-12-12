@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/providers/app_state.dart';
+import '../../core/utils/page_transitions.dart';
 import '../home/main_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -64,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Go directly to main screen without email confirmation
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const MainScreen()),
+          PageTransitions.fade(const MainScreen()),
           (route) => false,
         );
         

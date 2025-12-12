@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/book.dart';
+import '../../core/utils/page_transitions.dart';
 import '../products/product_detail_screen.dart';
 
 class ScannerScreen extends StatefulWidget {
@@ -253,9 +254,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           Navigator.pop(context);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetailScreen(book: book),
-                            ),
+                            PageTransitions.scaleUp(ProductDetailScreen(book: book)),
                           );
                         },
                         style: ElevatedButton.styleFrom(

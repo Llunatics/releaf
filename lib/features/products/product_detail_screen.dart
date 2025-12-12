@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/book.dart';
+import '../../core/utils/page_transitions.dart';
 import 'add_book_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -72,9 +73,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     if (value == 'edit') {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => AddBookScreen(bookToEdit: widget.book),
-                        ),
+                        PageTransitions.slideUp(AddBookScreen(bookToEdit: widget.book)),
                       );
                     } else if (value == 'delete') {
                       _showDeleteDialog(context, appState);

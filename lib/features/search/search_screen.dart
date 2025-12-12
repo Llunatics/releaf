@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/book.dart';
+import '../../core/utils/page_transitions.dart';
 import '../products/product_detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -260,7 +261,7 @@ class _SearchScreenState extends State<SearchScreen> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProductDetailScreen(book: book)),
+          PageTransitions.scaleUp(ProductDetailScreen(book: book)),
         );
       },
       child: Container(

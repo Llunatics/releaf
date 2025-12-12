@@ -4,6 +4,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/data/dummy_data.dart';
+import '../../core/utils/page_transitions.dart';
 import 'widgets/book_card.dart';
 import 'product_detail_screen.dart';
 import 'add_book_screen.dart';
@@ -74,7 +75,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddBookScreen()),
+            PageTransitions.slideUp(const AddBookScreen()),
           );
         },
         backgroundColor: AppColors.primaryBlue,
@@ -192,9 +193,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetailScreen(book: books[index]),
-                      ),
+                      PageTransitions.scaleUp(ProductDetailScreen(book: books[index])),
                     );
                   },
                 ),
@@ -236,9 +235,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetailScreen(book: book),
-          ),
+          PageTransitions.scaleUp(ProductDetailScreen(book: book)),
         );
       },
       child: Container(
