@@ -148,21 +148,6 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadUserProfile() async {
-    if (_currentUser == null) return;
-    try {
-      _userProfile = await SupabaseService.instance.getProfile(_currentUser!.id);
-      // If profile is null, try to ensure it exists
-      if (_userProfile == null) {
-        await _ensureUserProfile();
-      }
-    } catch (e) {
-      debugPrint('Error loading profile: $e');
-      // Try to create profile if loading fails
-      await _ensureUserProfile();
-    }
-  }
-
   Future<void> _loadUserWishlist() async {
     if (_currentUser == null) return;
     try {

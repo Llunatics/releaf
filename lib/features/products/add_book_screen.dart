@@ -566,11 +566,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context); // Close dialog
+              final dialogContext = context;
+              Navigator.pop(dialogContext); // Close dialog
               await appState.deleteBook(widget.bookToEdit!.id);
               if (!mounted) return;
-              Navigator.pop(context); // Go back
-              ToastHelper.showSuccess(context, appState.tr('book_deleted'));
+              if (dialogContext.mounted) {
+                Navigator.pop(dialogContext); // Go back
+                ToastHelper.showSuccess(dialogContext, appState.tr('book_deleted'));
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,

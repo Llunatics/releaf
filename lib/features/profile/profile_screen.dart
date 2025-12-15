@@ -354,7 +354,7 @@ class ProfileScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: color, size: 22),
@@ -425,7 +425,7 @@ class ProfileScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6).withOpacity(0.1),
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: const Color(0xFF3B82F6), size: 22),
@@ -457,8 +457,8 @@ class ProfileScreen extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF3B82F6),
-            activeTrackColor: const Color(0xFF3B82F6).withOpacity(0.3),
+            activeThumbColor: const Color(0xFF3B82F6),
+            activeTrackColor: const Color(0xFF3B82F6).withValues(alpha: 0.3),
           ),
         ],
       ),
@@ -484,7 +484,7 @@ class ProfileScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.1),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: const Color(0xFF3B82F6), size: 22),
@@ -587,7 +587,7 @@ class ProfileScreen extends StatelessWidget {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: const Color(0xFF3B82F6),
+        activeThumbColor: const Color(0xFF3B82F6),
       ),
     );
   }
@@ -614,7 +614,7 @@ class ProfileScreen extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: textSecondary.withOpacity(0.3),
+                    color: textSecondary.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -660,7 +660,7 @@ class ProfileScreen extends StatelessWidget {
       title: Text(language, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
       trailing: isSelected 
           ? const Icon(Icons.check_circle_rounded, color: Color(0xFF3B82F6))
-          : Icon(Icons.circle_outlined, color: textColor.withOpacity(0.3)),
+          : Icon(Icons.circle_outlined, color: textColor.withValues(alpha: 0.3)),
       onTap: onTap,
     );
   }
@@ -809,7 +809,7 @@ class ProfileScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF3B82F6).withOpacity(0.1),
+                          color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(isId ? 'Utama' : 'Primary', style: const TextStyle(color: Color(0xFF3B82F6), fontSize: 11, fontWeight: FontWeight.w600)),
@@ -843,7 +843,7 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textSecondary.withOpacity(0.3), borderRadius: BorderRadius.circular(2))),
+              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textSecondary.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 24),
             Text(isId ? 'Metode Pembayaran' : 'Payment Methods', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
@@ -878,7 +878,7 @@ class ProfileScreen extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color(0xFF3B82F6).withOpacity(0.1),
+          color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: const Color(0xFF3B82F6)),
@@ -905,7 +905,7 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
-              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textSecondary.withOpacity(0.3), borderRadius: BorderRadius.circular(2))),
+              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textSecondary.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 24),
             Text(isId ? 'Pusat Bantuan' : 'Help Center', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
@@ -927,7 +927,7 @@ class ProfileScreen extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color(0xFF3B82F6).withOpacity(0.1),
+          color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: const Color(0xFF3B82F6)),
@@ -958,7 +958,7 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textPrimary.withOpacity(0.2), borderRadius: BorderRadius.circular(2))),
+                child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textPrimary.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(2))),
               ),
               const SizedBox(height: 24),
               Text(isId ? 'Kebijakan Privasi' : 'Privacy Policy', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
@@ -1008,7 +1008,7 @@ You have the right to access, update, or delete your personal information at any
 
 6. Contact Us
 If you have any questions about this Privacy Policy, please contact us at privacy@releaf.com.''',
-                    style: TextStyle(color: textPrimary.withOpacity(0.8), height: 1.6),
+                    style: TextStyle(color: textPrimary.withValues(alpha: 0.8), height: 1.6),
                   ),
                 ),
               ),
@@ -1041,7 +1041,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1E3A5F).withOpacity(0.3),
+                      color: const Color(0xFF1E3A5F).withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -1191,7 +1191,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withOpacity(0.12),
+                color: const Color(0xFFEF4444).withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444), size: 32),
@@ -1299,7 +1299,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEF4444).withOpacity(0.1),
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -1351,7 +1351,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                           Icon(
                             Icons.favorite_border_rounded,
                             size: 64,
-                            color: textSecondary.withOpacity(0.5),
+                            color: textSecondary.withValues(alpha: 0.5),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -1369,7 +1369,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                 : 'Explore and save books you like!',
                             style: TextStyle(
                               fontSize: 14,
-                              color: textSecondary.withOpacity(0.7),
+                              color: textSecondary.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -1457,7 +1457,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                             vertical: 4,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF10B981).withOpacity(0.1),
+                                            color: const Color(0xFF10B981).withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(6),
                                           ),
                                           child: Text(
@@ -1476,7 +1476,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                             vertical: 4,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: _getConditionColor(book.condition).withOpacity(0.1),
+                                            color: _getConditionColor(book.condition).withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(6),
                                           ),
                                           child: Text(
@@ -1558,7 +1558,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3B82F6).withOpacity(0.1),
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -1610,7 +1610,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                           Icon(
                             Icons.receipt_long_outlined,
                             size: 64,
-                            color: textSecondary.withOpacity(0.5),
+                            color: textSecondary.withValues(alpha: 0.5),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -1628,7 +1628,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                 : 'Start shopping for preloved books!',
                             style: TextStyle(
                               fontSize: 14,
-                              color: textSecondary.withOpacity(0.7),
+                              color: textSecondary.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -1668,7 +1668,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: _getStatusColor(transaction.status).withOpacity(0.1),
+                                      color: _getStatusColor(transaction.status).withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -1766,7 +1766,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withOpacity(0.1),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -1836,7 +1836,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                             Icon(
                               Icons.menu_book_outlined,
                               size: 64,
-                              color: textSecondary.withOpacity(0.5),
+                              color: textSecondary.withValues(alpha: 0.5),
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -1854,7 +1854,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                   : 'Start selling your preloved books!',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: textSecondary.withOpacity(0.7),
+                                color: textSecondary.withValues(alpha: 0.7),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -1962,7 +1962,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFF10B981).withOpacity(0.1),
+                                              color: const Color(0xFF10B981).withValues(alpha: 0.1),
                                               borderRadius: BorderRadius.circular(6),
                                             ),
                                             child: Text(
@@ -1982,8 +1982,8 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                             ),
                                             decoration: BoxDecoration(
                                               color: book.stock > 0 
-                                                  ? const Color(0xFF10B981).withOpacity(0.1)
-                                                  : const Color(0xFFEF4444).withOpacity(0.1),
+                                                  ? const Color(0xFF10B981).withValues(alpha: 0.1)
+                                                  : const Color(0xFFEF4444).withValues(alpha: 0.1),
                                               borderRadius: BorderRadius.circular(6),
                                             ),
                                             child: Text(
@@ -2018,7 +2018,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                       icon: Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFF3B82F6).withOpacity(0.1),
+                                          color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: const Icon(
@@ -2037,7 +2037,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                       icon: Container(
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFEF4444).withOpacity(0.1),
+                                          color: const Color(0xFFEF4444).withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: const Icon(
@@ -2075,7 +2075,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withOpacity(0.12),
+                color: const Color(0xFFEF4444).withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.delete_rounded, color: Color(0xFFEF4444), size: 32),

@@ -76,16 +76,16 @@ class _MainScreenState extends State<MainScreen> {
           boxShadow: [
             BoxShadow(
               color: isDark 
-                  ? Colors.black.withOpacity(0.4)
-                  : Colors.black.withOpacity(0.08),
+                  ? Colors.black.withValues(alpha: 0.4)
+                  : Colors.black.withValues(alpha: 0.08),
               blurRadius: 24,
               spreadRadius: 0,
               offset: const Offset(0, 8),
             ),
             BoxShadow(
               color: isDark 
-                  ? Colors.black.withOpacity(0.2)
-                  : Colors.black.withOpacity(0.04),
+                  ? Colors.black.withValues(alpha: 0.2)
+                  : Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               spreadRadius: 0,
               offset: const Offset(0, 2),
@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
           border: Border.all(
             color: isDark 
                 ? const Color(0xFF30363D) 
-                : Colors.grey.withOpacity(0.1),
+                : Colors.grey.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -139,8 +139,8 @@ class _MainScreenState extends State<MainScreen> {
           gradient: isSelected 
             ? LinearGradient(
                 colors: [
-                  AppColors.primaryBlue.withOpacity(0.15),
-                  AppColors.primaryBlue.withOpacity(0.08),
+                  AppColors.primaryBlue.withValues(alpha: 0.15),
+                  AppColors.primaryBlue.withValues(alpha: 0.08),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -150,7 +150,7 @@ class _MainScreenState extends State<MainScreen> {
           borderRadius: BorderRadius.circular(18),
           border: isSelected 
             ? Border.all(
-                color: AppColors.primaryBlue.withOpacity(0.2),
+                color: AppColors.primaryBlue.withValues(alpha: 0.2),
                 width: 1,
               )
             : null,
@@ -187,7 +187,7 @@ class _MainScreenState extends State<MainScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFEF4444).withOpacity(0.4),
+                            color: const Color(0xFFEF4444).withValues(alpha: 0.4),
                             blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),

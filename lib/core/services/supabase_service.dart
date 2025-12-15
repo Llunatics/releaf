@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
 
@@ -88,7 +89,7 @@ class SupabaseService {
           .maybeSingle();
       return response;
     } catch (e) {
-      print('Error getting profile: $e');
+      debugPrint('Error getting profile: $e');
       return null;
     }
   }
@@ -119,10 +120,10 @@ class SupabaseService {
           .select()
           .single();
       
-      print('Profile created for user: $userId');
+      debugPrint('Profile created for user: $userId');
       return response;
     } catch (e) {
-      print('Error ensuring profile: $e');
+      debugPrint('Error ensuring profile: $e');
       // Try to get existing profile again (might have been created by trigger)
       return await getProfile(userId);
     }

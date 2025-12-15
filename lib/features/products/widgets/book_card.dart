@@ -35,8 +35,8 @@ class BookCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark 
-            ? Colors.white.withOpacity(0.1)
-            : Colors.grey.withOpacity(0.15),
+            ? Colors.white.withValues(alpha: 0.1)
+            : Colors.grey.withValues(alpha: 0.15),
         ),
       ),
       child: Column(
@@ -151,7 +151,7 @@ class BookCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFDC2626).withOpacity(0.1),
+                            color: const Color(0xFFDC2626).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(

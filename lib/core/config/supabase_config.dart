@@ -1,10 +1,10 @@
-/// Supabase Configuration
-/// 
-/// PENTING: Ganti nilai di bawah ini dengan kredensial dari Supabase Dashboard
-/// Settings → API → Project URL dan anon/public key
-/// 
-/// JANGAN commit file ini ke repository publik!
-/// Tambahkan ke .gitignore untuk keamanan.
+// Supabase Configuration
+// 
+// PENTING: Ganti nilai di bawah ini dengan kredensial dari Supabase Dashboard
+// Settings → API → Project URL dan anon/public key
+// 
+// JANGAN commit file ini ke repository publik!
+// Tambahkan ke .gitignore untuk keamanan.
 
 class SupabaseConfig {
   // Ganti dengan Project URL dari Supabase Dashboard

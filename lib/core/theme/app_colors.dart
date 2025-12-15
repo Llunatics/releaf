@@ -65,13 +65,13 @@ class AppColors {
   );
   
   // Glass Effect Colors
-  static Color glassWhite = Colors.white.withOpacity(0.15);
-  static Color glassBorder = Colors.white.withOpacity(0.2);
-  static Color glassOverlay = Colors.white.withOpacity(0.1);
+  static Color glassWhite = Colors.white.withValues(alpha: 0.15);
+  static Color glassBorder = Colors.white.withValues(alpha: 0.2);
+  static Color glassOverlay = Colors.white.withValues(alpha: 0.1);
   
   // Shadow Colors
-  static Color shadowLight = const Color(0xFF3B82F6).withOpacity(0.08);
-  static Color shadowMedium = const Color(0xFF3B82F6).withOpacity(0.15);
+  static Color shadowLight = const Color(0xFF3B82F6).withValues(alpha: 0.08);
+  static Color shadowMedium = const Color(0xFF3B82F6).withValues(alpha: 0.15);
   
   // Category Colors
   static const List<Color> categoryColors = [

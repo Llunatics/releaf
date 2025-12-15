@@ -175,10 +175,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEF4444).withOpacity(isDark ? 0.15 : 0.08),
+                        color: Color(0xFFEF4444).withValues(alpha: isDark ? 0.15 : 0.08),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: const Color(0xFFEF4444).withOpacity(0.25),
+                          color: const Color(0xFFEF4444).withValues(alpha: 0.25),
                         ),
                       ),
                       child: Row(
@@ -186,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEF4444).withOpacity(0.2),
+                              color: const Color(0xFFEF4444).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -387,7 +387,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF3B82F6),
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFF3B82F6).withOpacity(0.6),
+                        disabledBackgroundColor: const Color(0xFF3B82F6).withValues(alpha: 0.6),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -479,7 +479,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       validator: validator,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: hintColor.withOpacity(0.6), fontSize: 15),
+        hintStyle: TextStyle(color: hintColor.withValues(alpha: 0.6), fontSize: 15),
         prefixIcon: Padding(
           padding: const EdgeInsets.only(left: 16, right: 12),
           child: Icon(icon, color: hintColor, size: 22),
