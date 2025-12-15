@@ -19,6 +19,19 @@ extension BookConditionExtension on BookCondition {
     }
   }
 
+  String localizedLabel(bool isId) {
+    switch (this) {
+      case BookCondition.likeNew:
+        return isId ? 'Seperti Baru' : 'Like New';
+      case BookCondition.veryGood:
+        return isId ? 'Sangat Baik' : 'Very Good';
+      case BookCondition.good:
+        return isId ? 'Baik' : 'Good';
+      case BookCondition.acceptable:
+        return isId ? 'Cukup' : 'Acceptable';
+    }
+  }
+
   String get description {
     switch (this) {
       case BookCondition.likeNew:
@@ -29,6 +42,19 @@ extension BookConditionExtension on BookCondition {
         return 'Ada tanda pemakaian, semua halaman lengkap';
       case BookCondition.acceptable:
         return 'Masih bisa dibaca dengan tanda pemakaian terlihat';
+    }
+  }
+
+  String localizedDescription(bool isId) {
+    switch (this) {
+      case BookCondition.likeNew:
+        return isId ? 'Kondisi mulus, tanpa tanda pemakaian' : 'Perfect condition, no signs of use';
+      case BookCondition.veryGood:
+        return isId ? 'Sedikit tanda pemakaian, halaman utuh' : 'Minimal signs of use, pages intact';
+      case BookCondition.good:
+        return isId ? 'Ada tanda pemakaian, semua halaman lengkap' : 'Some signs of use, all pages complete';
+      case BookCondition.acceptable:
+        return isId ? 'Masih bisa dibaca dengan tanda pemakaian terlihat' : 'Readable with visible signs of use';
     }
   }
 

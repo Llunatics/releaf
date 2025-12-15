@@ -23,6 +23,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     final isWishlisted = appState.isInWishlist(widget.book.id);
     final isInCart = appState.isInCart(widget.book.id);
 
@@ -279,7 +280,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                widget.book.condition.label,
+                                widget.book.condition.localizedLabel(isId),
                                 style: TextStyle(
                                   color: _getConditionColor(widget.book.condition),
                                   fontSize: 12,
@@ -304,7 +305,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                         // Author
                         Text(
-                          'oleh ${widget.book.author}',
+                          appState.language == 'id' 
+                              ? 'oleh ${widget.book.author}'
+                              : 'by ${widget.book.author}',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                           ),
@@ -334,7 +337,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              '(${widget.book.reviewCount} ulasan)',
+                              appState.language == 'id'
+                                  ? '(${widget.book.reviewCount} ulasan)'
+                                  : '(${widget.book.reviewCount} reviews)',
                               style: TextStyle(
                                 color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                                 fontSize: 14,
@@ -374,13 +379,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         const SizedBox(height: 24),
 
                         // Book Details
-                        _buildDetailsSection(isDark),
+                        _buildDetailsSection(isDark, appState),
 
                         const SizedBox(height: 24),
 
                         // Description
                         Text(
-                          'Deskripsi',
+                          appState.language == 'id' ? 'Deskripsi' : 'Description',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -397,7 +402,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                         // Seller Info
                         if (widget.book.sellerName != null)
-                          _buildSellerSection(isDark),
+                          _buildSellerSection(isDark, appState),
 
                         const SizedBox(height: 100),
                       ],
@@ -521,7 +526,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        isInCart ? 'Lihat Keranjang' : 'Tambah ke Keranjang',
+                        isInCart 
+                            ? (appState.language == 'id' ? 'Lihat Keranjang' : 'View Cart')
+                            : (appState.language == 'id' ? 'Tambah ke Keranjang' : 'Add to Cart'),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -539,7 +546,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  Widget _buildDetailsSection(bool isDark) {
+  Widget _buildDetailsSection(bool isDark, AppState appState) {
+    final isId = appState.language == 'id';
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -557,15 +565,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         children: [
           _buildDetailRow('ISBN', widget.book.isbn, isDark),
           _buildDivider(isDark),
-          _buildDetailRow('Penerbit', widget.book.publisher, isDark),
+          _buildDetailRow(isId ? 'Penerbit' : 'Publisher', widget.book.publisher, isDark),
           _buildDivider(isDark),
-          _buildDetailRow('Tahun', widget.book.year.toString(), isDark),
+          _buildDetailRow(isId ? 'Tahun' : 'Year', widget.book.year.toString(), isDark),
           _buildDivider(isDark),
-          _buildDetailRow('Halaman', '${widget.book.pages} halaman', isDark),
+          _buildDetailRow(isId ? 'Halaman' : 'Pages', isId ? '${widget.book.pages} halaman' : '${widget.book.pages} pages', isDark),
           _buildDivider(isDark),
-          _buildDetailRow('Bahasa', widget.book.language, isDark),
+          _buildDetailRow(isId ? 'Bahasa' : 'Language', widget.book.language, isDark),
           _buildDivider(isDark),
-          _buildDetailRow('Stok', '${widget.book.stock} tersedia', isDark),
+          _buildDetailRow(isId ? 'Stok' : 'Stock', isId ? '${widget.book.stock} tersedia' : '${widget.book.stock} available', isDark),
         ],
       ),
     );
@@ -603,7 +611,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  Widget _buildSellerSection(bool isDark) {
+  Widget _buildSellerSection(bool isDark, AppState appState) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -666,7 +674,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ),
           TextButton(
             onPressed: () {},
-            child: const Text('Kunjungi Toko'),
+            child: Text(appState.language == 'id' ? 'Kunjungi Toko' : 'Visit Store'),
           ),
         ],
       ),

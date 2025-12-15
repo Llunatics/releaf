@@ -52,7 +52,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       appBar: AppBar(
-        title: const Text('Semua Buku'),
+        title: Text(appState.language == 'id' ? 'Semua Buku' : 'All Books'),
         backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
         actions: [
           IconButton(
@@ -80,7 +80,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         },
         backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text('Tambah Buku', style: TextStyle(color: Colors.white)),
+        label: Text(appState.language == 'id' ? 'Tambah Buku' : 'Add Book', style: const TextStyle(color: Colors.white)),
       ).animate().scale(delay: 300.ms, duration: 300.ms) : null,
       body: Column(
         children: [
@@ -95,7 +95,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return _buildFilterChip(
-                    'Semua',
+                    appState.language == 'id' ? 'Semua' : 'All',
                     _selectedCategory == null,
                     () => setState(() => _selectedCategory = null),
                     isDark,
@@ -118,7 +118,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
             child: Row(
               children: [
                 Text(
-                  '${books.length} buku ditemukan',
+                  appState.language == 'id' 
+                      ? '${books.length} buku ditemukan'
+                      : '${books.length} books found',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -362,7 +364,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   void _showSortBottomSheet() {
-    final isDark = AppStateProvider.of(context).isDarkMode;
+    final appState = AppStateProvider.of(context);
+    final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     
     showModalBottomSheet(
       context: context,
@@ -389,16 +393,16 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                'Urutkan',
+                isId ? 'Urutkan' : 'Sort By',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
-              _buildSortOption('Terbaru', 'newest', isDark),
-              _buildSortOption('Harga: Rendah ke Tinggi', 'price_low', isDark),
-              _buildSortOption('Harga: Tinggi ke Rendah', 'price_high', isDark),
-              _buildSortOption('Rating Tertinggi', 'rating', isDark),
+              _buildSortOption(isId ? 'Terbaru' : 'Newest', 'newest', isDark),
+              _buildSortOption(isId ? 'Harga: Rendah ke Tinggi' : 'Price: Low to High', 'price_low', isDark),
+              _buildSortOption(isId ? 'Harga: Tinggi ke Rendah' : 'Price: High to Low', 'price_high', isDark),
+              _buildSortOption(isId ? 'Rating Tertinggi' : 'Highest Rating', 'rating', isDark),
               const SizedBox(height: 16),
             ],
           ),

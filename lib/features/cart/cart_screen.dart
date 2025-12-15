@@ -28,7 +28,7 @@ class CartScreen extends StatelessWidget {
         title: Column(
           children: [
             Text(
-              'Keranjang',
+              appState.language == 'id' ? 'Keranjang' : 'Cart',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -55,12 +55,12 @@ class CartScreen extends StatelessWidget {
                 Icons.delete_sweep_outlined,
                 color: Colors.red[400],
               ),
-              tooltip: 'Hapus semua',
+              tooltip: appState.language == 'id' ? 'Hapus semua' : 'Clear all',
             ),
         ],
       ),
       body: cart.isEmpty
-        ? _buildEmptyCart(context, isDark)
+        ? _buildEmptyCart(context, isDark, appState)
         : Column(
             children: [
               Expanded(
@@ -81,7 +81,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyCart(BuildContext context, bool isDark) {
+  Widget _buildEmptyCart(BuildContext context, bool isDark, AppState appState) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +104,7 @@ class CartScreen extends StatelessWidget {
           ).animate().scale(duration: 400.ms),
           const SizedBox(height: 32),
           Text(
-            'Keranjang Kosong',
+            appState.language == 'id' ? 'Keranjang Kosong' : 'Your Cart is Empty',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w700,
@@ -113,7 +113,9 @@ class CartScreen extends StatelessWidget {
           ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
           const SizedBox(height: 10),
           Text(
-            'Yuk, tambahkan buku ke keranjangmu',
+            appState.language == 'id' 
+                ? 'Yuk, tambahkan buku ke keranjangmu'
+                : 'Add some books to your cart',
             style: TextStyle(
               fontSize: 15,
               color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -125,9 +127,9 @@ class CartScreen extends StatelessWidget {
               // Navigate to products
             },
             icon: const Icon(Icons.explore_outlined, color: Colors.white, size: 20),
-            label: const Text(
-              'Jelajahi Buku',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            label: Text(
+              appState.language == 'id' ? 'Jelajahi Buku' : 'Browse Books',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF3B82F6),
@@ -153,7 +155,9 @@ class CartScreen extends StatelessWidget {
               appState.removeFromCart(item.book.id);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${item.book.title} dihapus dari keranjang'),
+                  content: Text(appState.language == 'id' 
+                      ? '${item.book.title} dihapus dari keranjang'
+                      : '${item.book.title} removed from cart'),
                   backgroundColor: AppColors.error,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -163,7 +167,7 @@ class CartScreen extends StatelessWidget {
             backgroundColor: AppColors.error,
             foregroundColor: Colors.white,
             icon: Icons.delete_rounded,
-            label: 'Hapus',
+            label: appState.language == 'id' ? 'Hapus' : 'Remove',
             borderRadius: BorderRadius.circular(16),
           ),
         ],
@@ -349,14 +353,14 @@ class CartScreen extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white, size: 20),
-                    SizedBox(width: 10),
+                    const Icon(Icons.shopping_cart_checkout_rounded, color: Colors.white, size: 20),
+                    const SizedBox(width: 10),
                     Text(
-                      'Lanjutkan ke Checkout',
-                      style: TextStyle(
+                      appState.language == 'id' ? 'Lanjutkan ke Checkout' : 'Proceed to Checkout',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
@@ -374,18 +378,21 @@ class CartScreen extends StatelessWidget {
 
   void _showClearCartDialog(BuildContext context, AppState appState) {
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Kosongkan Keranjang'),
-        content: const Text('Apakah Anda yakin ingin menghapus semua item dari keranjang?'),
+        title: Text(isId ? 'Kosongkan Keranjang' : 'Clear Cart'),
+        content: Text(isId 
+            ? 'Apakah Anda yakin ingin menghapus semua item dari keranjang?'
+            : 'Are you sure you want to remove all items from your cart?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: Text(isId ? 'Batal' : 'Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -393,7 +400,7 @@ class CartScreen extends StatelessWidget {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Keranjang dikosongkan'),
+                  content: Text(isId ? 'Keranjang dikosongkan' : 'Cart cleared'),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -401,7 +408,7 @@ class CartScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Hapus', style: TextStyle(color: Colors.white)),
+            child: Text(isId ? 'Hapus' : 'Clear', style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

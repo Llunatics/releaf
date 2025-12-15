@@ -123,7 +123,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
               ).animate().scale(duration: 300.ms),
               const SizedBox(height: 16),
               Text(
-                bookFound ? 'Buku Ditemukan!' : 'Buku Tidak Ditemukan',
+                bookFound 
+                    ? (appState.language == 'id' ? 'Buku Ditemukan!' : 'Book Found!')
+                    : (appState.language == 'id' ? 'Buku Tidak Ditemukan' : 'Book Not Found'),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -243,7 +245,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Scan Lagi'),
+                      child: Text(appState.language == 'id' ? 'Scan Lagi' : 'Scan Again'),
                     ),
                   ),
                   if (bookFound) ...[
@@ -264,9 +266,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Lihat Detail',
-                          style: TextStyle(color: Colors.white),
+                        child: Text(
+                          appState.language == 'id' ? 'Lihat Detail' : 'View Details',
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ),

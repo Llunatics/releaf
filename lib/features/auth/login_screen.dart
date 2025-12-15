@@ -57,8 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
+      final appState = AppStateProvider.of(context);
+      final isId = appState.language == 'id';
       setState(() {
-        _errorMessage = _parseError(e.toString());
+        _errorMessage = _parseError(e.toString(), isId);
       });
     } finally {
       if (mounted) {
@@ -67,21 +69,22 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  String _parseError(String error) {
+  String _parseError(String error, bool isId) {
     if (error.contains('Invalid login credentials')) {
-      return 'Email atau password salah';
+      return isId ? 'Email atau password salah' : 'Invalid email or password';
     } else if (error.contains('Email not confirmed')) {
-      return 'Silakan verifikasi email Anda terlebih dahulu';
+      return isId ? 'Silakan verifikasi email Anda terlebih dahulu' : 'Please verify your email first';
     } else if (error.contains('Too many requests')) {
-      return 'Terlalu banyak percobaan. Coba lagi nanti.';
+      return isId ? 'Terlalu banyak percobaan. Coba lagi nanti.' : 'Too many attempts. Try again later.';
     }
-    return 'Terjadi kesalahan. Silakan coba lagi.';
+    return isId ? 'Terjadi kesalahan. Silakan coba lagi.' : 'An error occurred. Please try again.';
   }
 
   @override
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     
     final backgroundColor = isDark ? const Color(0xFF0D1117) : const Color(0xFFF8FAFC);
     final textPrimary = isDark ? Colors.white : const Color(0xFF1E293B);
@@ -145,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 32),
                         
                         Text(
-                          'Selamat Datang',
+                          isId ? 'Selamat Datang' : 'Welcome',
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w700,
@@ -157,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 8),
                         
                         Text(
-                          'Masuk untuk melanjutkan ke Releaf',
+                          isId ? 'Masuk untuk melanjutkan ke Releaf' : 'Sign in to continue to Releaf',
                           style: TextStyle(
                             fontSize: 16,
                             color: textSecondary,
@@ -215,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 10),
                   _buildTextField(
                     controller: _emailController,
-                    hint: 'Masukkan email Anda',
+                    hint: isId ? 'Masukkan email Anda' : 'Enter your email',
                     icon: Icons.mail_outline_rounded,
                     keyboardType: TextInputType.emailAddress,
                     isDark: isDark,
@@ -224,9 +227,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     textColor: textPrimary,
                     hintColor: textSecondary,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Email wajib diisi';
+                      if (value == null || value.isEmpty) return isId ? 'Email wajib diisi' : 'Email is required';
                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                        return 'Masukkan alamat email yang valid';
+                        return isId ? 'Masukkan alamat email yang valid' : 'Enter a valid email address';
                       }
                       return null;
                     },
@@ -235,11 +238,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
 
                   // Password Field
-                  _buildLabel('Kata Sandi', textPrimary),
+                  _buildLabel(isId ? 'Kata Sandi' : 'Password', textPrimary),
                   const SizedBox(height: 10),
                   _buildTextField(
                     controller: _passwordController,
-                    hint: 'Masukkan kata sandi Anda',
+                    hint: isId ? 'Masukkan kata sandi Anda' : 'Enter your password',
                     icon: Icons.lock_outline_rounded,
                     obscureText: _obscurePassword,
                     isDark: isDark,
@@ -256,8 +259,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Kata sandi wajib diisi';
-                      if (value.length < 6) return 'Kata sandi minimal 6 karakter';
+                      if (value == null || value.isEmpty) return isId ? 'Kata sandi wajib diisi' : 'Password is required';
+                      if (value.length < 6) return isId ? 'Kata sandi minimal 6 karakter' : 'Password must be at least 6 characters';
                       return null;
                     },
                   ).animate().fadeIn(duration: 400.ms, delay: 500.ms),
@@ -269,9 +272,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
                       onTap: () => _showForgotPasswordDialog(isDark, textPrimary, textSecondary, inputFillColor, inputBorderColor),
-                      child: const Text(
-                        'Lupa Kata Sandi?',
-                        style: TextStyle(
+                      child: Text(
+                        isId ? 'Lupa Kata Sandi?' : 'Forgot Password?',
+                        style: const TextStyle(
                           color: Color(0xFF3B82F6),
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -306,9 +309,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 strokeWidth: 2.5,
                               ),
                             )
-                          : const Text(
-                              'Masuk',
-                              style: TextStyle(
+                          : Text(
+                              isId ? 'Masuk' : 'Sign In',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -324,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Expanded(child: Divider(color: inputBorderColor)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text('atau', style: TextStyle(color: textSecondary, fontWeight: FontWeight.w500)),
+                        child: Text(isId ? 'atau' : 'or', style: TextStyle(color: textSecondary, fontWeight: FontWeight.w500)),
                       ),
                       Expanded(child: Divider(color: inputBorderColor)),
                     ],
@@ -351,7 +354,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         backgroundColor: isDark ? const Color(0xFF161B22) : Colors.transparent,
                       ),
                       child: Text(
-                        'Lanjutkan sebagai Tamu',
+                        isId ? 'Lanjutkan sebagai Tamu' : 'Continue as Guest',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -369,7 +372,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Belum punya akun? ',
+                          isId ? 'Belum punya akun? ' : "Don't have an account? ",
                           style: TextStyle(color: textSecondary, fontSize: 15),
                         ),
                         GestureDetector(
@@ -379,9 +382,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               PageTransitions.slideFromRight(const RegisterScreen()),
                             );
                           },
-                          child: const Text(
-                            'Daftar',
-                            style: TextStyle(
+                          child: Text(
+                            isId ? 'Daftar' : 'Sign Up',
+                            style: const TextStyle(
                               color: Color(0xFF3B82F6),
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
@@ -469,6 +472,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showForgotPasswordDialog(bool isDark, Color textPrimary, Color textSecondary, Color inputFillColor, Color inputBorderColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     final emailController = TextEditingController();
     final bgColor = isDark ? const Color(0xFF161B22) : Colors.white;
     
@@ -491,12 +496,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Reset Kata Sandi',
+              isId ? 'Reset Kata Sandi' : 'Reset Password',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary),
             ),
             const SizedBox(height: 8),
             Text(
-              'Masukkan alamat email Anda untuk menerima link reset kata sandi.',
+              isId 
+                  ? 'Masukkan alamat email Anda untuk menerima link reset kata sandi.'
+                  : 'Enter your email address to receive a password reset link.',
               textAlign: TextAlign.center,
               style: TextStyle(color: textSecondary, fontSize: 14, height: 1.4),
             ),
@@ -506,7 +513,7 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               style: TextStyle(color: textPrimary, fontSize: 16),
               decoration: InputDecoration(
-                hintText: 'Alamat email',
+                hintText: isId ? 'Alamat email' : 'Email address',
                 hintStyle: TextStyle(color: textSecondary.withOpacity(0.6)),
                 filled: true,
                 fillColor: inputFillColor,
@@ -533,7 +540,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextButton(
                     onPressed: () => Navigator.pop(ctx),
                     style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                    child: Text('Batal', style: TextStyle(color: textSecondary, fontWeight: FontWeight.w600)),
+                    child: Text(isId ? 'Batal' : 'Cancel', style: TextStyle(color: textSecondary, fontWeight: FontWeight.w600)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -547,7 +554,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pop(ctx);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Link reset terkirim! Cek email Anda.'),
+                                content: Text(isId ? 'Link reset terkirim! Cek email Anda.' : 'Reset link sent! Check your email.'),
                                 backgroundColor: const Color(0xFF10B981),
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -559,7 +566,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (ctx.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Kesalahan: ${e.toString()}'),
+                                content: Text('${isId ? 'Kesalahan' : 'Error'}: ${e.toString()}'),
                                 backgroundColor: const Color(0xFFEF4444),
                                 behavior: SnackBarBehavior.floating,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -577,7 +584,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       elevation: 0,
                     ),
-                    child: const Text('Kirim Link', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(isId ? 'Kirim Link' : 'Send Link', style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],

@@ -525,6 +525,8 @@ class ProfileScreen extends StatelessWidget {
 
   // Dialog Methods
   void _showNotificationSettings(BuildContext context, bool isDark, Color textPrimary, Color textSecondary, Color cardColor, Color borderColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -556,7 +558,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Pengaturan Notifikasi',
+                  isId ? 'Pengaturan Notifikasi' : 'Notification Settings',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -564,10 +566,10 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildNotificationToggle('Notifikasi Push', pushNotif, (v) => setState(() => pushNotif = v), textPrimary),
-                _buildNotificationToggle('Notifikasi Email', emailNotif, (v) => setState(() => emailNotif = v), textPrimary),
-                _buildNotificationToggle('Info Pesanan', orderUpdates, (v) => setState(() => orderUpdates = v), textPrimary),
-                _buildNotificationToggle('Promosi', promotions, (v) => setState(() => promotions = v), textPrimary),
+                _buildNotificationToggle(isId ? 'Notifikasi Push' : 'Push Notifications', pushNotif, (v) => setState(() => pushNotif = v), textPrimary),
+                _buildNotificationToggle(isId ? 'Notifikasi Email' : 'Email Notifications', emailNotif, (v) => setState(() => emailNotif = v), textPrimary),
+                _buildNotificationToggle(isId ? 'Info Pesanan' : 'Order Updates', orderUpdates, (v) => setState(() => orderUpdates = v), textPrimary),
+                _buildNotificationToggle(isId ? 'Promosi' : 'Promotions', promotions, (v) => setState(() => promotions = v), textPrimary),
                 const SizedBox(height: 16),
               ],
             ),
@@ -738,6 +740,8 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showAddresses(BuildContext context, bool isDark, Color textPrimary, Color textSecondary, Color cardColor, Color borderColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -754,11 +758,11 @@ class ProfileScreen extends StatelessWidget {
               child: Container(width: 40, height: 4, decoration: BoxDecoration(color: borderColor, borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 24),
-            Text('Alamat Pengiriman', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
+            Text(isId ? 'Alamat Pengiriman' : 'Shipping Addresses', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
             const SizedBox(height: 24),
-            _buildAddressCard('Rumah', 'Jl. Sudirman No. 123, Jakarta', true, cardColor, textPrimary, textSecondary, borderColor),
+            _buildAddressCard(isId ? 'Rumah' : 'Home', 'Jl. Sudirman No. 123, Jakarta', true, cardColor, textPrimary, textSecondary, borderColor, isId),
             const SizedBox(height: 12),
-            _buildAddressCard('Kantor', 'Jl. Gatot Subroto No. 456, Jakarta', false, cardColor, textPrimary, textSecondary, borderColor),
+            _buildAddressCard(isId ? 'Kantor' : 'Office', 'Jl. Gatot Subroto No. 456, Jakarta', false, cardColor, textPrimary, textSecondary, borderColor, isId),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
@@ -766,7 +770,7 @@ class ProfileScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.add_rounded, color: Color(0xFF3B82F6)),
-                label: const Text('Tambah Alamat', style: TextStyle(color: Color(0xFF3B82F6), fontWeight: FontWeight.w600)),
+                label: Text(isId ? 'Tambah Alamat' : 'Add Address', style: const TextStyle(color: Color(0xFF3B82F6), fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Color(0xFF3B82F6)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -780,7 +784,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddressCard(String label, String address, bool isDefault, Color cardColor, Color textPrimary, Color textSecondary, Color borderColor) {
+  Widget _buildAddressCard(String label, String address, bool isDefault, Color cardColor, Color textPrimary, Color textSecondary, Color borderColor, bool isId) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -807,7 +811,7 @@ class ProfileScreen extends StatelessWidget {
                           color: const Color(0xFF3B82F6).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text('Utama', style: TextStyle(color: Color(0xFF3B82F6), fontSize: 11, fontWeight: FontWeight.w600)),
+                        child: Text(isId ? 'Utama' : 'Primary', style: const TextStyle(color: Color(0xFF3B82F6), fontSize: 11, fontWeight: FontWeight.w600)),
                       ),
                     ],
                   ],
@@ -823,6 +827,8 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showPaymentMethods(BuildContext context, bool isDark, Color textPrimary, Color textSecondary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -839,9 +845,9 @@ class ProfileScreen extends StatelessWidget {
               child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textSecondary.withOpacity(0.3), borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 24),
-            Text('Metode Pembayaran', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
+            Text(isId ? 'Metode Pembayaran' : 'Payment Methods', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
             const SizedBox(height: 24),
-            _buildPaymentOption('Kartu Kredit', '•••• •••• •••• 4242', Icons.credit_card_rounded, textPrimary, textSecondary),
+            _buildPaymentOption(isId ? 'Kartu Kredit' : 'Credit Card', '•••• •••• •••• 4242', Icons.credit_card_rounded, textPrimary, textSecondary),
             const SizedBox(height: 12),
             _buildPaymentOption('GoPay', 'john.doe@email.com', Icons.account_balance_wallet_rounded, textPrimary, textSecondary),
             const SizedBox(height: 20),
@@ -851,7 +857,7 @@ class ProfileScreen extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.add_rounded, color: Color(0xFF3B82F6)),
-                label: const Text('Tambah Metode Pembayaran', style: TextStyle(color: Color(0xFF3B82F6), fontWeight: FontWeight.w600)),
+                label: Text(isId ? 'Tambah Metode Pembayaran' : 'Add Payment Method', style: const TextStyle(color: Color(0xFF3B82F6), fontWeight: FontWeight.w600)),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Color(0xFF3B82F6)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -883,6 +889,8 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showHelpCenter(BuildContext context, bool isDark, Color textPrimary, Color textSecondary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -899,12 +907,12 @@ class ProfileScreen extends StatelessWidget {
               child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textSecondary.withOpacity(0.3), borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 24),
-            Text('Pusat Bantuan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
+            Text(isId ? 'Pusat Bantuan' : 'Help Center', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
             const SizedBox(height: 24),
-            _buildHelpOption(Icons.chat_bubble_outline_rounded, 'Chat dengan Kami', 'Dapatkan bantuan instan', textPrimary, textSecondary),
-            _buildHelpOption(Icons.email_outlined, 'Dukungan Email', 'support@releaf.com', textPrimary, textSecondary),
-            _buildHelpOption(Icons.phone_outlined, 'Hubungi Kami', '+62 21 1234 5678', textPrimary, textSecondary),
-            _buildHelpOption(Icons.help_outline_rounded, 'FAQ', 'Temukan jawaban pertanyaan umum', textPrimary, textSecondary),
+            _buildHelpOption(Icons.chat_bubble_outline_rounded, isId ? 'Chat dengan Kami' : 'Chat with Us', isId ? 'Dapatkan bantuan instan' : 'Get instant help', textPrimary, textSecondary),
+            _buildHelpOption(Icons.email_outlined, isId ? 'Dukungan Email' : 'Email Support', 'support@releaf.com', textPrimary, textSecondary),
+            _buildHelpOption(Icons.phone_outlined, isId ? 'Hubungi Kami' : 'Call Us', '+62 21 1234 5678', textPrimary, textSecondary),
+            _buildHelpOption(Icons.help_outline_rounded, 'FAQ', isId ? 'Temukan jawaban pertanyaan umum' : 'Find answers to common questions', textPrimary, textSecondary),
             const SizedBox(height: 16),
           ],
         ),
@@ -929,6 +937,8 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showPrivacyPolicy(BuildContext context, bool isDark, Color textPrimary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -950,13 +960,13 @@ class ProfileScreen extends StatelessWidget {
                 child: Container(width: 40, height: 4, decoration: BoxDecoration(color: textPrimary.withOpacity(0.2), borderRadius: BorderRadius.circular(2))),
               ),
               const SizedBox(height: 24),
-              Text('Kebijakan Privasi', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
+              Text(isId ? 'Kebijakan Privasi' : 'Privacy Policy', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary)),
               const SizedBox(height: 20),
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Text(
-                    '''Terakhir diperbarui: Desember 2024
+                    isId ? '''Terakhir diperbarui: Desember 2024
 
 Privasi Anda penting bagi kami. Kebijakan Privasi ini menjelaskan bagaimana Releaf mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda.
 
@@ -976,7 +986,27 @@ Kami menerapkan langkah-langkah keamanan yang tepat untuk melindungi informasi p
 Anda berhak mengakses, memperbarui, atau menghapus informasi pribadi Anda kapan saja melalui pengaturan akun Anda.
 
 6. Hubungi Kami
-Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami di privacy@releaf.com.''',
+Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami di privacy@releaf.com.''' : '''Last updated: December 2024
+
+Your privacy is important to us. This Privacy Policy explains how Releaf collects, uses, and protects your personal information.
+
+1. Information We Collect
+We collect information you provide directly to us, such as your name, email address, and payment information when you create an account or make a purchase.
+
+2. How We Use Your Information
+We use the information we collect to provide, maintain, and improve our services, process transactions, and send you related information.
+
+3. Information Sharing
+We do not sell, trade, or transfer your personal information to outside parties without your consent.
+
+4. Data Security
+We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.
+
+5. Your Rights
+You have the right to access, update, or delete your personal information at any time through your account settings.
+
+6. Contact Us
+If you have any questions about this Privacy Policy, please contact us at privacy@releaf.com.''',
                     style: TextStyle(color: textPrimary.withOpacity(0.8), height: 1.6),
                   ),
                 ),
@@ -989,6 +1019,8 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
   }
 
   void _showAboutDialog(BuildContext context, bool isDark, Color textPrimary, Color textSecondary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1021,10 +1053,12 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
             const SizedBox(height: 20),
             Text('Releaf', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: textPrimary)),
             const SizedBox(height: 6),
-            Text('Versi 1.0.0', style: TextStyle(color: textSecondary, fontSize: 14)),
+            Text(isId ? 'Versi 1.0.0' : 'Version 1.0.0', style: TextStyle(color: textSecondary, fontSize: 14)),
             const SizedBox(height: 16),
             Text(
-              'Marketplace Buku Bekas\nBeri kehidupan baru pada buku 📚',
+              isId 
+                  ? 'Marketplace Buku Bekas\nBeri kehidupan baru pada buku 📚'
+                  : 'Preloved Books Marketplace\nGive books a new life 📚',
               textAlign: TextAlign.center,
               style: TextStyle(color: textSecondary, height: 1.5),
             ),
@@ -1039,7 +1073,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: const Text('Tutup', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                child: Text(isId ? 'Tutup' : 'Close', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
               ),
             ),
           ],
@@ -1134,6 +1168,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
   }
 
   void _showWishlistSheet(BuildContext context, AppState appState, bool isDark) {
+    final isId = appState.language == 'id';
     final backgroundColor = isDark ? const Color(0xFF161B22) : Colors.white;
     final textPrimary = isDark ? Colors.white : const Color(0xFF1F2937);
     final textSecondary = isDark ? const Color(0xFF8B949E) : const Color(0xFF6B7280);
@@ -1187,7 +1222,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Wishlist Saya',
+                          isId ? 'Wishlist Saya' : 'My Wishlist',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -1195,7 +1230,9 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                           ),
                         ),
                         Text(
-                          '${appState.wishlist.length} buku tersimpan',
+                          isId 
+                              ? '${appState.wishlist.length} buku tersimpan'
+                              : '${appState.wishlist.length} book${appState.wishlist.length > 1 ? 's' : ''} saved',
                           style: TextStyle(
                             fontSize: 14,
                             color: textSecondary,
@@ -1226,7 +1263,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Wishlist masih kosong',
+                            isId ? 'Wishlist masih kosong' : 'Wishlist is empty',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -1235,7 +1272,9 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Jelajahi dan simpan buku yang Anda suka!',
+                            isId 
+                                ? 'Jelajahi dan simpan buku yang Anda suka!'
+                                : 'Explore and save books you like!',
                             style: TextStyle(
                               fontSize: 14,
                               color: textSecondary.withOpacity(0.7),
@@ -1349,7 +1388,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                                             borderRadius: BorderRadius.circular(6),
                                           ),
                                           child: Text(
-                                            book.condition.label,
+                                            book.condition.localizedLabel(isId),
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
@@ -1388,6 +1427,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
   }
 
   void _showOrdersSheet(BuildContext context, AppState appState, bool isDark) {
+    final isId = appState.language == 'id';
     final backgroundColor = isDark ? const Color(0xFF161B22) : Colors.white;
     final textPrimary = isDark ? Colors.white : const Color(0xFF1F2937);
     final textSecondary = isDark ? const Color(0xFF8B949E) : const Color(0xFF6B7280);
@@ -1441,7 +1481,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Pesanan Saya',
+                          isId ? 'Pesanan Saya' : 'My Orders',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -1449,7 +1489,9 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                           ),
                         ),
                         Text(
-                          '${appState.transactions.length} pesanan',
+                          isId 
+                              ? '${appState.transactions.length} pesanan'
+                              : '${appState.transactions.length} order${appState.transactions.length > 1 ? 's' : ''}',
                           style: TextStyle(
                             fontSize: 14,
                             color: textSecondary,
@@ -1480,7 +1522,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Belum ada pesanan',
+                            isId ? 'Belum ada pesanan' : 'No orders yet',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -1489,7 +1531,9 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Mulai belanja buku bekas!',
+                            isId 
+                                ? 'Mulai belanja buku bekas!'
+                                : 'Start shopping for preloved books!',
                             style: TextStyle(
                               fontSize: 14,
                               color: textSecondary.withOpacity(0.7),
@@ -1536,7 +1580,7 @@ Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kam
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      transaction.status.label.toUpperCase(),
+                                      transaction.status.localizedLabel(isId).toUpperCase(),
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,

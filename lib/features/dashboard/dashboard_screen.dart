@@ -25,6 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Scaffold(
@@ -52,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Expanded(
                   child: _buildSummaryCard(
-                    'Total Penjualan',
+                    isId ? 'Total Penjualan' : 'Total Sales',
                     currencyFormat.format(appState.totalSales),
                     Icons.attach_money_rounded,
                     AppColors.success,
@@ -62,7 +63,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildSummaryCard(
-                    'Transaksi',
+                    isId ? 'Transaksi' : 'Transactions',
                     appState.totalTransactions.toString(),
                     Icons.receipt_long_rounded,
                     AppColors.primaryBlue,
@@ -76,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Expanded(
                   child: _buildSummaryCard(
-                    'Selesai',
+                    isId ? 'Selesai' : 'Completed',
                     appState.completedTransactions.toString(),
                     Icons.check_circle_rounded,
                     AppColors.success,
@@ -86,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildSummaryCard(
-                    'Menunggu',
+                    isId ? 'Menunggu' : 'Pending',
                     appState.pendingTransactions.toString(),
                     Icons.pending_rounded,
                     AppColors.warning,
@@ -100,7 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             // Sales Trend Chart
             Text(
-              'Tren Penjualan (7 Hari)',
+              isId ? 'Tren Penjualan (7 Hari)' : 'Sales Trend (7 Days)',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -127,7 +128,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             // Sales by Category
             Text(
-              'Penjualan per Kategori',
+              isId ? 'Penjualan per Kategori' : 'Sales by Category',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -147,27 +148,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ],
               ),
-              child: _buildPieChart(appState, isDark, currencyFormat),
+              child: _buildPieChart(appState, isDark, currencyFormat, isId),
             ),
 
             const SizedBox(height: 24),
 
             // Best Selling Book
             Text(
-              'Buku Terlaris',
+              isId ? 'Buku Terlaris' : 'Best Selling Books',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
             if (appState.bestSellingBook != null)
-              _buildBestSellerCard(appState, isDark, currencyFormat),
+              _buildBestSellerCard(appState, isDark, currencyFormat, isId),
 
             const SizedBox(height: 24),
 
             // Recent Transactions
             Text(
-              'Transaksi Terbaru',
+              isId ? 'Transaksi Terbaru' : 'Recent Transactions',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -341,12 +342,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildPieChart(AppState appState, bool isDark, NumberFormat currencyFormat) {
+  Widget _buildPieChart(AppState appState, bool isDark, NumberFormat currencyFormat, bool isId) {
     final salesByCategory = appState.salesByCategory;
     if (salesByCategory.isEmpty) {
       return Center(
         child: Text(
-          'Belum ada data penjualan',
+          isId ? 'Belum ada data penjualan' : 'No sales data yet',
           style: TextStyle(
             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
           ),
@@ -426,7 +427,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildBestSellerCard(AppState appState, bool isDark, NumberFormat currencyFormat) {
+  Widget _buildBestSellerCard(AppState appState, bool isDark, NumberFormat currencyFormat, bool isId) {
     final book = appState.bestSellingBook!;
     
     return Container(
@@ -475,14 +476,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 14),
-                      SizedBox(width: 4),
+                      const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 14),
+                      const SizedBox(width: 4),
                       Text(
-                        'Terlaris',
-                        style: TextStyle(
+                        isId ? 'Terlaris' : 'Best Seller',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,

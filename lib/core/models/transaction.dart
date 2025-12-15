@@ -25,6 +25,21 @@ extension TransactionStatusExtension on TransactionStatus {
     }
   }
 
+  String localizedLabel(bool isId) {
+    switch (this) {
+      case TransactionStatus.pending:
+        return isId ? 'Menunggu' : 'Pending';
+      case TransactionStatus.processing:
+        return isId ? 'Diproses' : 'Processing';
+      case TransactionStatus.shipped:
+        return isId ? 'Dikirim' : 'Shipped';
+      case TransactionStatus.completed:
+        return isId ? 'Selesai' : 'Completed';
+      case TransactionStatus.cancelled:
+        return isId ? 'Dibatalkan' : 'Cancelled';
+    }
+  }
+
   String get description {
     switch (this) {
       case TransactionStatus.pending:
@@ -37,6 +52,21 @@ extension TransactionStatusExtension on TransactionStatus {
         return 'Pesanan berhasil diterima';
       case TransactionStatus.cancelled:
         return 'Pesanan telah dibatalkan';
+    }
+  }
+
+  String localizedDescription(bool isId) {
+    switch (this) {
+      case TransactionStatus.pending:
+        return isId ? 'Menunggu konfirmasi pembayaran' : 'Waiting for payment confirmation';
+      case TransactionStatus.processing:
+        return isId ? 'Pesanan sedang disiapkan' : 'Order is being prepared';
+      case TransactionStatus.shipped:
+        return isId ? 'Pesanan telah dikirim' : 'Order has been shipped';
+      case TransactionStatus.completed:
+        return isId ? 'Pesanan berhasil diterima' : 'Order successfully received';
+      case TransactionStatus.cancelled:
+        return isId ? 'Pesanan telah dibatalkan' : 'Order has been cancelled';
     }
   }
 }

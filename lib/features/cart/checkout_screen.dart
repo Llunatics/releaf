@@ -35,6 +35,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Scaffold(
@@ -61,7 +62,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             title: Column(
               children: [
                 Text(
-                  'Checkout',
+                  isId ? 'Checkout' : 'Checkout',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -69,7 +70,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 ),
                 Text(
-                  '${appState.cart.length} item',
+                  '${appState.cart.length} ${isId ? 'item' : 'item${appState.cart.length > 1 ? 's' : ''}'}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -89,7 +90,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Order Summary Section
-                    _buildSectionTitle('Ringkasan Pesanan', Icons.shopping_bag_outlined, isDark),
+                    _buildSectionTitle(isId ? 'Ringkasan Pesanan' : 'Order Summary', Icons.shopping_bag_outlined, isDark),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -192,15 +193,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             );
                           }),
                           Divider(height: 32, color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
-                          _buildPriceRow('Subtotal', currencyFormat.format(appState.cartTotal), isDark),
+                          _buildPriceRow(isId ? 'Subtotal' : 'Subtotal', currencyFormat.format(appState.cartTotal), isDark),
                           const SizedBox(height: 8),
-                          _buildPriceRow('Ongkos Kirim', currencyFormat.format(15000), isDark),
+                          _buildPriceRow(isId ? 'Ongkos Kirim' : 'Shipping', currencyFormat.format(15000), isDark),
                           const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Total',
+                                isId ? 'Total' : 'Total',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -224,7 +225,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           const SizedBox(height: 28),
 
                     // Shipping Information
-                    _buildSectionTitle('Informasi Pengiriman', Icons.local_shipping_outlined, isDark),
+                    _buildSectionTitle(isId ? 'Informasi Pengiriman' : 'Shipping Information', Icons.local_shipping_outlined, isDark),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -243,33 +244,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         children: [
                           _buildModernTextField(
                             controller: _nameController,
-                            label: 'Nama Penerima',
+                            label: isId ? 'Nama Penerima' : 'Recipient Name',
                             icon: Icons.person_outline,
-                            validator: (value) => value?.isEmpty ?? true ? 'Nama wajib diisi' : null,
+                            validator: (value) => value?.isEmpty ?? true ? (isId ? 'Nama wajib diisi' : 'Name is required') : null,
                             isDark: isDark,
                           ),
                           const SizedBox(height: 16),
                           _buildModernTextField(
                             controller: _phoneController,
-                            label: 'Nomor Telepon',
+                            label: isId ? 'Nomor Telepon' : 'Phone Number',
                             icon: Icons.phone_outlined,
                             keyboardType: TextInputType.phone,
-                            validator: (value) => value?.isEmpty ?? true ? 'Nomor telepon wajib diisi' : null,
+                            validator: (value) => value?.isEmpty ?? true ? (isId ? 'Nomor telepon wajib diisi' : 'Phone is required') : null,
                             isDark: isDark,
                           ),
                           const SizedBox(height: 16),
                           _buildModernTextField(
                             controller: _addressController,
-                            label: 'Alamat Lengkap',
+                            label: isId ? 'Alamat Lengkap' : 'Full Address',
                             icon: Icons.location_on_outlined,
                             maxLines: 3,
-                            validator: (value) => value?.isEmpty ?? true ? 'Alamat wajib diisi' : null,
+                            validator: (value) => value?.isEmpty ?? true ? (isId ? 'Alamat wajib diisi' : 'Address is required') : null,
                             isDark: isDark,
                           ),
                           const SizedBox(height: 16),
                           _buildModernTextField(
                             controller: _notesController,
-                            label: 'Catatan (Opsional)',
+                            label: isId ? 'Catatan (Opsional)' : 'Notes (Optional)',
                             icon: Icons.note_outlined,
                             maxLines: 2,
                             isDark: isDark,
@@ -281,7 +282,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     const SizedBox(height: 28),
 
                     // Payment Method
-                    _buildSectionTitle('Metode Pembayaran', Icons.payment_outlined, isDark),
+                    _buildSectionTitle(isId ? 'Metode Pembayaran' : 'Payment Method', Icons.payment_outlined, isDark),
                     const SizedBox(height: 16),
                     Container(
                       decoration: BoxDecoration(
@@ -298,8 +299,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: Column(
                         children: [
                           _buildModernPaymentOption(
-                            'Transfer Bank', 
-                            'Transfer ke rekening bank', 
+                            isId ? 'Transfer Bank' : 'Bank Transfer', 
+                            isId ? 'Transfer ke rekening bank' : 'Transfer to bank account', 
                             'transfer', 
                             Icons.account_balance_outlined, 
                             isDark,
@@ -308,15 +309,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           Divider(height: 1, color: isDark ? Colors.grey.shade800 : Colors.grey.shade100),
                           _buildModernPaymentOption(
                             'E-Wallet', 
-                            'GoPay, OVO, DANA, dll', 
+                            isId ? 'GoPay, OVO, DANA, dll' : 'GoPay, OVO, DANA, etc.', 
                             'ewallet', 
                             Icons.wallet_outlined, 
                             isDark,
                           ),
                           Divider(height: 1, color: isDark ? Colors.grey.shade800 : Colors.grey.shade100),
                           _buildModernPaymentOption(
-                            'Bayar di Tempat', 
-                            'Bayar saat barang diterima', 
+                            isId ? 'Bayar di Tempat' : 'Cash on Delivery', 
+                            isId ? 'Bayar saat barang diterima' : 'Pay when goods are received', 
                             'cod', 
                             Icons.local_shipping_outlined, 
                             isDark,
@@ -369,14 +370,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Row(
+                  : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.shopping_cart_checkout, size: 22),
-                        SizedBox(width: 12),
+                        const Icon(Icons.shopping_cart_checkout, size: 22),
+                        const SizedBox(width: 12),
                         Text(
-                          'Buat Pesanan',
-                          style: TextStyle(
+                          isId ? 'Buat Pesanan' : 'Place Order',
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -586,7 +587,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
+      builder: (dialogContext) {
+        final isId = appState.language == 'id';
+        return Dialog(
         backgroundColor: appState.isDarkMode ? AppColors.surfaceDark : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
@@ -606,7 +609,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ).animate().scale(duration: 400.ms),
               const SizedBox(height: 24),
               Text(
-                'Pesanan Berhasil!',
+                isId ? 'Pesanan Berhasil!' : 'Order Successful!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -624,7 +627,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ).animate().fadeIn(duration: 300.ms, delay: 300.ms),
               const SizedBox(height: 12),
               Text(
-                'Terima kasih telah berbelanja!\nAnda akan segera menerima konfirmasi.',
+                isId 
+                    ? 'Terima kasih telah berbelanja!\nAnda akan segera menerima konfirmasi.'
+                    : 'Thank you for shopping!\nYou will receive a confirmation soon.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -651,16 +656,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Kembali ke Beranda',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  child: Text(
+                    isId ? 'Kembali ke Beranda' : 'Back to Home',
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                 ),
               ).animate().fadeIn(duration: 300.ms, delay: 500.ms),
             ],
           ),
         ),
-      ),
+      );
+      },
     );
   }
 }

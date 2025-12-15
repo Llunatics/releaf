@@ -37,7 +37,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
     
     if (!_agreedToTerms) {
-      setState(() => _errorMessage = 'Silakan setujui Syarat & Ketentuan');
+      final appState = AppStateProvider.of(context);
+      final isId = appState.language == 'id';
+      setState(() => _errorMessage = isId ? 'Silakan setujui Syarat & Ketentuan' : 'Please agree to Terms & Conditions');
       return;
     }
 
@@ -72,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Akun berhasil dibuat! Selamat datang di Releaf.'),
+            content: Text(appState.language == 'id' ? 'Akun berhasil dibuat! Selamat datang di Releaf.' : 'Account created! Welcome to Releaf.'),
             backgroundColor: const Color(0xFF10B981),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -81,27 +83,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     } catch (e) {
-      setState(() => _errorMessage = _parseError(e.toString()));
+      final appState = AppStateProvider.of(context);
+      final isId = appState.language == 'id';
+      setState(() => _errorMessage = _parseError(e.toString(), isId));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  String _parseError(String error) {
+  String _parseError(String error, bool isId) {
     if (error.contains('User already registered')) {
-      return 'Email ini sudah terdaftar. Silakan masuk.';
+      return isId ? 'Email ini sudah terdaftar. Silakan masuk.' : 'Email already registered. Please sign in.';
     } else if (error.contains('Password should be')) {
-      return 'Kata sandi terlalu lemah. Gunakan huruf dan angka.';
+      return isId ? 'Kata sandi terlalu lemah. Gunakan huruf dan angka.' : 'Password is too weak. Use letters and numbers.';
     } else if (error.contains('Invalid email')) {
-      return 'Masukkan alamat email yang valid.';
+      return isId ? 'Masukkan alamat email yang valid.' : 'Enter a valid email address.';
     }
-    return 'Terjadi kesalahan. Silakan coba lagi.';
+    return isId ? 'Terjadi kesalahan. Silakan coba lagi.' : 'An error occurred. Please try again.';
   }
 
   @override
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
     
     final backgroundColor = isDark ? const Color(0xFF0D1117) : const Color(0xFFF8FAFC);
     final textPrimary = isDark ? Colors.white : const Color(0xFF1E293B);
@@ -145,7 +150,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   
                   // Title
                   Text(
-                    'Buat Akun',
+                    isId ? 'Buat Akun' : 'Create Account',
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
@@ -157,7 +162,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 8),
                   
                   Text(
-                    'Bergabunglah dengan Releaf dan mulai perjalanan membaca Anda',
+                    isId 
+                        ? 'Bergabunglah dengan Releaf dan mulai perjalanan membaca Anda'
+                        : 'Join Releaf and start your reading journey',
                     style: TextStyle(
                       fontSize: 16,
                       color: textSecondary,
@@ -208,11 +215,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ).animate().shake(duration: 400.ms),
 
                   // Full Name Field
-                  _buildLabel('Nama Lengkap', textPrimary),
+                  _buildLabel(isId ? 'Nama Lengkap' : 'Full Name', textPrimary),
                   const SizedBox(height: 10),
                   _buildTextField(
                     controller: _nameController,
-                    hint: 'Masukkan nama lengkap Anda',
+                    hint: isId ? 'Masukkan nama lengkap Anda' : 'Enter your full name',
                     icon: Icons.person_outline_rounded,
                     isDark: isDark,
                     fillColor: inputFillColor,
@@ -221,8 +228,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     hintColor: textSecondary,
                     textCapitalization: TextCapitalization.words,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Nama wajib diisi';
-                      if (value.length < 3) return 'Nama minimal 3 karakter';
+                      if (value == null || value.isEmpty) return isId ? 'Nama wajib diisi' : 'Name is required';
+                      if (value.length < 3) return isId ? 'Nama minimal 3 karakter' : 'Name must be at least 3 characters';
                       return null;
                     },
                   ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
@@ -234,7 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 10),
                   _buildTextField(
                     controller: _emailController,
-                    hint: 'Masukkan email Anda',
+                    hint: isId ? 'Masukkan email Anda' : 'Enter your email',
                     icon: Icons.mail_outline_rounded,
                     keyboardType: TextInputType.emailAddress,
                     isDark: isDark,
@@ -243,9 +250,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     textColor: textPrimary,
                     hintColor: textSecondary,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Email wajib diisi';
+                      if (value == null || value.isEmpty) return isId ? 'Email wajib diisi' : 'Email is required';
                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                        return 'Masukkan alamat email yang valid';
+                        return isId ? 'Masukkan alamat email yang valid' : 'Enter a valid email address';
                       }
                       return null;
                     },
@@ -254,11 +261,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 18),
 
                   // Password Field
-                  _buildLabel('Kata Sandi', textPrimary),
+                  _buildLabel(isId ? 'Kata Sandi' : 'Password', textPrimary),
                   const SizedBox(height: 10),
                   _buildTextField(
                     controller: _passwordController,
-                    hint: 'Buat kata sandi',
+                    hint: isId ? 'Buat kata sandi' : 'Create a password',
                     icon: Icons.lock_outline_rounded,
                     obscureText: _obscurePassword,
                     isDark: isDark,
@@ -275,8 +282,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Kata sandi wajib diisi';
-                      if (value.length < 6) return 'Kata sandi minimal 6 karakter';
+                      if (value == null || value.isEmpty) return isId ? 'Kata sandi wajib diisi' : 'Password is required';
+                      if (value.length < 6) return isId ? 'Kata sandi minimal 6 karakter' : 'Password must be at least 6 characters';
                       return null;
                     },
                   ).animate().fadeIn(duration: 400.ms, delay: 400.ms),
@@ -284,11 +291,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 18),
 
                   // Confirm Password Field
-                  _buildLabel('Konfirmasi Kata Sandi', textPrimary),
+                  _buildLabel(isId ? 'Konfirmasi Kata Sandi' : 'Confirm Password', textPrimary),
                   const SizedBox(height: 10),
                   _buildTextField(
                     controller: _confirmPasswordController,
-                    hint: 'Konfirmasi kata sandi Anda',
+                    hint: isId ? 'Konfirmasi kata sandi Anda' : 'Confirm your password',
                     icon: Icons.lock_outline_rounded,
                     obscureText: _obscureConfirmPassword,
                     isDark: isDark,
@@ -305,8 +312,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Silakan konfirmasi kata sandi Anda';
-                      if (value != _passwordController.text) return 'Kata sandi tidak cocok';
+                      if (value == null || value.isEmpty) return isId ? 'Silakan konfirmasi kata sandi Anda' : 'Please confirm your password';
+                      if (value != _passwordController.text) return isId ? 'Kata sandi tidak cocok' : 'Passwords do not match';
                       return null;
                     },
                   ).animate().fadeIn(duration: 400.ms, delay: 500.ms),
@@ -348,19 +355,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: textSecondary,
                                 height: 1.4,
                               ),
-                              children: const [
-                                TextSpan(text: 'Saya setuju dengan '),
+                              children: [
+                                TextSpan(text: isId ? 'Saya setuju dengan ' : 'I agree to the '),
                                 TextSpan(
-                                  text: 'Syarat Layanan',
-                                  style: TextStyle(
+                                  text: isId ? 'Syarat Layanan' : 'Terms of Service',
+                                  style: const TextStyle(
                                     color: Color(0xFF3B82F6),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                TextSpan(text: ' dan '),
+                                TextSpan(text: isId ? ' dan ' : ' and '),
                                 TextSpan(
-                                  text: 'Kebijakan Privasi',
-                                  style: TextStyle(
+                                  text: isId ? 'Kebijakan Privasi' : 'Privacy Policy',
+                                  style: const TextStyle(
                                     color: Color(0xFF3B82F6),
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -399,9 +406,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 strokeWidth: 2.5,
                               ),
                             )
-                          : const Text(
-                              'Buat Akun',
-                              style: TextStyle(
+                          : Text(
+                              isId ? 'Buat Akun' : 'Create Account',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -417,14 +424,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Sudah punya akun? ',
+                          isId ? 'Sudah punya akun? ' : 'Already have an account? ',
                           style: TextStyle(color: textSecondary, fontSize: 15),
                         ),
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: const Text(
-                            'Masuk',
-                            style: TextStyle(
+                          child: Text(
+                            isId ? 'Masuk' : 'Sign In',
+                            style: const TextStyle(
                               color: Color(0xFF3B82F6),
                               fontWeight: FontWeight.w700,
                               fontSize: 15,

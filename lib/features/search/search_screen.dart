@@ -74,7 +74,9 @@ class _SearchScreenState extends State<SearchScreen> {
             color: isDark ? Colors.white : AppColors.textPrimaryLight,
           ),
           decoration: InputDecoration(
-            hintText: 'Cari buku, penulis, ISBN...',
+            hintText: appState.language == 'id' 
+                ? 'Cari buku, penulis, ISBN...'
+                : 'Search books, authors, ISBN...',
             hintStyle: TextStyle(
               color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
             ),
@@ -101,10 +103,10 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (_searchResults.isEmpty) {
-      return _buildNoResults(context, isDark);
+      return _buildNoResults(context, isDark, appState);
     }
 
-    return _buildResults(context, isDark);
+    return _buildResults(context, isDark, appState);
   }
 
   Widget _buildSuggestions(BuildContext context, AppState appState, bool isDark) {
@@ -117,7 +119,7 @@ class _SearchScreenState extends State<SearchScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Pencarian Terakhir',
+            appState.language == 'id' ? 'Pencarian Terakhir' : 'Recent Searches',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -157,7 +159,7 @@ class _SearchScreenState extends State<SearchScreen> {
           const SizedBox(height: 32),
 
           Text(
-            'Kategori Populer',
+            appState.language == 'id' ? 'Kategori Populer' : 'Popular Categories',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -195,7 +197,8 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildNoResults(BuildContext context, bool isDark) {
+  Widget _buildNoResults(BuildContext context, bool isDark, AppState appState) {
+    final isId = appState.language == 'id';
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -214,14 +217,14 @@ class _SearchScreenState extends State<SearchScreen> {
           ).animate().scale(duration: 300.ms),
           const SizedBox(height: 16),
           Text(
-            'Tidak ditemukan',
+            isId ? 'Tidak ditemukan' : 'No results found',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
           const SizedBox(height: 8),
           Text(
-            'Coba kata kunci lain atau periksa ejaan',
+            isId ? 'Coba kata kunci lain atau periksa ejaan' : 'Try different keywords or check spelling',
             style: TextStyle(
               color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
             ),
@@ -231,14 +234,16 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildResults(BuildContext context, bool isDark) {
+  Widget _buildResults(BuildContext context, bool isDark, AppState appState) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(16),
           child: Text(
-            '${_searchResults.length} hasil ditemukan',
+            appState.language == 'id' 
+                ? '${_searchResults.length} hasil ditemukan'
+                : '${_searchResults.length} results found',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
