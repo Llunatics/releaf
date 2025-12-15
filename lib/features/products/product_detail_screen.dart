@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/book.dart';
 import '../../core/utils/page_transitions.dart';
+import '../cart/cart_screen.dart';
+import '../home/main_screen.dart';
 import 'add_book_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -102,7 +103,52 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ],
                 ),
-              // Wishlist button - only for logged in users
+              // Cart button with badge
+              IconButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    PageTransitions.fade(const MainScreen(initialTab: 3)),
+                    (route) => false,
+                  );
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.7),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(
+                        Icons.shopping_bag_outlined,
+                        size: 18,
+                        color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                      ),
+                      if (appState.cartItemCount > 0)
+                        Positioned(
+                          right: -8,
+                          top: -8,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.error,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                            child: Text(
+                              appState.cartItemCount > 9 ? '9+' : '${appState.cartItemCount}',
+                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              // Wishlist button
               IconButton(
                 onPressed: () {
                   if (appState.isLoggedIn) {
@@ -243,7 +289,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ),
                             ),
                           ],
-                        ).animate().fadeIn(duration: 300.ms).slideX(begin: -0.1),
+                        ),
 
                         const SizedBox(height: 16),
 
@@ -253,7 +299,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
-                        ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
+                        ),
 
                         const SizedBox(height: 8),
 
@@ -263,7 +309,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                           ),
-                        ).animate().fadeIn(duration: 300.ms, delay: 150.ms),
+                        ),
 
                         const SizedBox(height: 16),
 
@@ -296,7 +342,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ),
                             ),
                           ],
-                        ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+                        ),
 
                         const SizedBox(height: 20),
 
@@ -324,12 +370,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ),
                             ],
                           ],
-                        ).animate().fadeIn(duration: 300.ms, delay: 250.ms),
+                        ),
 
                         const SizedBox(height: 24),
 
                         // Book Details
-                        _buildDetailsSection(isDark).animate().fadeIn(duration: 300.ms, delay: 300.ms),
+                        _buildDetailsSection(isDark),
 
                         const SizedBox(height: 24),
 
@@ -346,13 +392,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             height: 1.6,
                           ),
-                        ).animate().fadeIn(duration: 300.ms, delay: 350.ms),
+                        ),
 
                         const SizedBox(height: 24),
 
                         // Seller Info
                         if (widget.book.sellerName != null)
-                          _buildSellerSection(isDark).animate().fadeIn(duration: 300.ms, delay: 400.ms),
+                          _buildSellerSection(isDark),
 
                         const SizedBox(height: 100),
                       ],
@@ -379,92 +425,108 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: SafeArea(
           child: Row(
             children: [
-              // Quantity Selector
-              Container(
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.cardDark : AppColors.backgroundLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
-                      icon: Icon(
-                        Icons.remove_rounded,
-                        color: _quantity > 1 ? AppColors.primaryBlue : AppColors.textTertiaryLight,
-                      ),
+              // Quantity Selector - only show when not in cart
+              if (!isInCart) ...[
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.cardDark : AppColors.backgroundLight,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF30363D) : const Color(0xFFE2E8F0),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        '$_quantity',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
+                        icon: Icon(
+                          Icons.remove_rounded,
+                          color: _quantity > 1 ? AppColors.primaryBlue : AppColors.textTertiaryLight,
                         ),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: _quantity < widget.book.stock ? () => setState(() => _quantity++) : null,
-                      icon: Icon(
-                        Icons.add_rounded,
-                        color: _quantity < widget.book.stock ? AppColors.primaryBlue : AppColors.textTertiaryLight,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          '$_quantity',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      IconButton(
+                        onPressed: _quantity < widget.book.stock ? () => setState(() => _quantity++) : null,
+                        icon: Icon(
+                          Icons.add_rounded,
+                          color: _quantity < widget.book.stock ? AppColors.primaryBlue : AppColors.textTertiaryLight,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              // Add to Cart Button - only for logged in users
+                const SizedBox(width: 12),
+              ],
+              // Add to Cart / View Cart Button
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    if (!appState.isLoggedIn) {
+                    if (isInCart) {
+                      // Navigate to cart tab
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        PageTransitions.fade(const MainScreen(initialTab: 3)),
+                        (route) => false,
+                      );
+                    } else {
+                      if (!appState.isLoggedIn) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Login untuk memesan buku'),
+                            backgroundColor: AppColors.warning,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                        );
+                        return;
+                      }
+                      appState.addToCart(widget.book, quantity: _quantity);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Login untuk memesan buku'),
-                          backgroundColor: AppColors.warning,
+                          content: Row(
+                            children: [
+                              const Icon(Icons.check_circle_rounded, color: Colors.white),
+                              const SizedBox(width: 12),
+                              Expanded(child: Text('${widget.book.title} ditambahkan ke keranjang')),
+                            ],
+                          ),
+                          backgroundColor: AppColors.success,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                       );
-                      return;
                     }
-                    appState.addToCart(widget.book, quantity: _quantity);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Row(
-                          children: [
-                            const Icon(Icons.check_circle_rounded, color: Colors.white),
-                            const SizedBox(width: 12),
-                            Text('${widget.book.title} added to cart'),
-                          ],
-                        ),
-                        backgroundColor: AppColors.success,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                    );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isInCart ? AppColors.success : AppColors.primaryBlue,
+                    backgroundColor: isInCart ? const Color(0xFF10B981) : AppColors.primaryBlue,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    elevation: 0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        isInCart ? Icons.check_rounded : Icons.shopping_bag_rounded,
+                        isInCart ? Icons.shopping_bag_rounded : Icons.add_shopping_cart_rounded,
                         color: Colors.white,
+                        size: 20,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 10),
                       Text(
-                        isInCart ? 'In Cart' : 'Add to Cart',
+                        isInCart ? 'Lihat Keranjang' : 'Tambah ke Keranjang',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
                         ),
                       ),
                     ],
