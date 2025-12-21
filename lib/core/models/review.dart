@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class BookReview {
   final String id;
   final String bookId;
@@ -42,7 +40,7 @@ class BookReview {
       userName: json['user_name'] ?? 'Anonymous',
       rating: (json['rating'] as num?)?.toDouble() ?? 0,
       comment: json['comment'] ?? '',
-      createdAt: json['created_at'] != null 
+      createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),
       userAvatar: json['user_avatar'],
@@ -54,10 +52,12 @@ class BookReview {
       id: json['id'] ?? '',
       bookId: json['book_id'] ?? '',
       userId: json['user_id'] ?? '',
-      userName: json['user_name'] ?? json['users']?['email']?.split('@')[0] ?? 'Anonymous',
+      userName: json['user_name'] ??
+          json['users']?['email']?.split('@')[0] ??
+          'Anonymous',
       rating: (json['rating'] as num?)?.toDouble() ?? 0,
       comment: json['comment'] ?? '',
-      createdAt: json['created_at'] != null 
+      createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),
       userAvatar: json['user_avatar'],
