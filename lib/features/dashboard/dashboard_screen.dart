@@ -624,6 +624,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return 'Processing';
       case 'TransactionStatus.shipped':
         return 'Shipped';
+      case 'TransactionStatus.delivered':
+        return 'Delivered';
       case 'TransactionStatus.cancelled':
         return 'Cancelled';
       default:
@@ -641,6 +643,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return AppColors.info;
       case 'TransactionStatus.shipped':
         return AppColors.primaryBlue;
+      case 'TransactionStatus.delivered':
+        return const Color(0xFF8B5CF6);
       case 'TransactionStatus.cancelled':
         return AppColors.error;
       default:

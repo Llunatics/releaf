@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/models/book.dart';
@@ -401,6 +402,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         if (widget.book.sellerName != null)
                           _buildSellerSection(isDark, appState),
 
+                        const SizedBox(height: 24),
+
+                        // Reviews Section
+                        _buildReviewsSection(isDark, appState).animate().fadeIn(duration: 300.ms, delay: 450.ms),
+
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -684,6 +690,197 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
       (Match m) => '${m[1]}.',
     );
+  }
+
+  Widget _buildReviewsSection(bool isDark, AppState appState) {
+    final reviews = widget.book.reviews ?? [];
+    final averageRating = widget.book.averageRating;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.star_rounded, color: Colors.amber[600], size: 24),
+              const SizedBox(width: 8),
+              Text(
+                'Reviews',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                ),
+              ),
+              const Spacer(),
+              if (reviews.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.star_rounded, color: Colors.amber[600], size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        averageRating.toStringAsFixed(1),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (reviews.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.rate_review_outlined,
+                      size: 48,
+                      color: isDark ? Colors.grey[700] : Colors.grey[300],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Belum ada review',
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[600] : Colors.grey[500],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: reviews.length,
+              separatorBuilder: (context, index) => Divider(
+                height: 24,
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+              ),
+              itemBuilder: (context, index) {
+                final review = reviews[index];
+                final rating = (review['rating'] as num?)?.toDouble() ?? 0;
+                final comment = review['comment'] as String? ?? '';
+                final userName = review['user_name'] as String? ?? 'Anonymous';
+                final createdAt = review['created_at'] != null
+                    ? DateTime.parse(review['created_at'])
+                    : DateTime.now();
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+                          child: Text(
+                            userName[0].toUpperCase(),
+                            style: const TextStyle(
+                              color: AppColors.primaryBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Row(
+                                    children: List.generate(5, (i) {
+                                      return Icon(
+                                        i < rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                                        size: 14,
+                                        color: Colors.amber[600],
+                                      );
+                                    }),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    _formatDate(createdAt),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (comment.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        comment,
+                        style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[700],
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return 'Hari ini';
+    } else if (difference.inDays == 1) {
+      return 'Kemarin';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} hari lalu';
+    } else if (difference.inDays < 30) {
+      return '${(difference.inDays / 7).floor()} minggu lalu';
+    } else if (difference.inDays < 365) {
+      return '${(difference.inDays / 30).floor()} bulan lalu';
+    } else {
+      return '${(difference.inDays / 365).floor()} tahun lalu';
+    }
   }
 
   void _showDeleteDialog(BuildContext context, AppState appState) {

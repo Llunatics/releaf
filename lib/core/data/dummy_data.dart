@@ -339,5 +339,16 @@ class DummyData {
       date: DateTime.now(),
       status: TransactionStatus.pending,
     ),
+    BookTransaction(
+      id: 'TRX008',
+      items: [
+        CartItem(book: books[11], quantity: 1),
+      ],
+      totalAmount: 95000,
+      date: DateTime.now().subtract(const Duration(hours: 12)),
+      status: TransactionStatus.delivered,
+      deliveredDate: DateTime.now().subtract(const Duration(hours: 12)),
+      autoAcceptDate: DateTime.now().add(const Duration(hours: 12)),
+    ),
   ];
 }

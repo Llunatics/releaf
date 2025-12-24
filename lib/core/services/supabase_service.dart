@@ -30,13 +30,13 @@ class SupabaseService {
   }
 
   // ==================== AUTH ====================
-  
+
   /// Get current user
   User? get currentUser => client.auth.currentUser;
-  
+
   /// Get current session
   Session? get currentSession => client.auth.currentSession;
-  
+
   /// Check if user is logged in
   bool get isLoggedIn => currentUser != null;
 
@@ -82,11 +82,8 @@ class SupabaseService {
   /// Get user profile - returns null if not found
   Future<Map<String, dynamic>?> getProfile(String userId) async {
     try {
-      final response = await client
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .maybeSingle();
+      final response =
+          await client.from('profiles').select().eq('id', userId).maybeSingle();
       return response;
     } catch (e) {
       debugPrint('Error getting profile: $e');
@@ -106,7 +103,7 @@ class SupabaseService {
       if (existing != null) {
         return existing;
       }
-      
+
       // Create new profile
       final response = await client
           .from('profiles')
@@ -167,10 +164,12 @@ class SupabaseService {
     }
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      query = query.or('title.ilike.%$searchQuery%,author.ilike.%$searchQuery%,isbn.ilike.%$searchQuery%');
+      query = query.or(
+          'title.ilike.%$searchQuery%,author.ilike.%$searchQuery%,isbn.ilike.%$searchQuery%');
     }
 
-    final response = await query.order(orderBy, ascending: ascending).limit(limit ?? 100);
+    final response =
+        await query.order(orderBy, ascending: ascending).limit(limit ?? 100);
     return List<Map<String, dynamic>>.from(response);
   }
 
@@ -197,7 +196,8 @@ class SupabaseService {
   }
 
   /// Get books with discount
-  Future<List<Map<String, dynamic>>> getDiscountedBooks({int limit = 10}) async {
+  Future<List<Map<String, dynamic>>> getDiscountedBooks(
+      {int limit = 10}) async {
     final response = await client
         .from('books')
         .select()
@@ -238,26 +238,30 @@ class SupabaseService {
     int? weight,
   }) async {
     final userId = currentUser?.id;
-    
-    final response = await client.from('books').insert({
-      'seller_id': userId,
-      'title': title,
-      'author': author,
-      'isbn': isbn,
-      'description': description,
-      'category': category,
-      'condition': condition,
-      'price': price,
-      'original_price': originalPrice,
-      'stock': stock,
-      'image_url': imageUrl,
-      'publisher': publisher,
-      'publish_year': publishYear,
-      'language': language ?? 'Indonesian',
-      'pages': pages,
-      'weight': weight,
-    }).select().single();
-    
+
+    final response = await client
+        .from('books')
+        .insert({
+          'seller_id': userId,
+          'title': title,
+          'author': author,
+          'isbn': isbn,
+          'description': description,
+          'category': category,
+          'condition': condition,
+          'price': price,
+          'original_price': originalPrice,
+          'stock': stock,
+          'image_url': imageUrl,
+          'publisher': publisher,
+          'publish_year': publishYear,
+          'language': language ?? 'Indonesian',
+          'pages': pages,
+          'weight': weight,
+        })
+        .select()
+        .single();
+
     return response;
   }
 
@@ -398,11 +402,15 @@ class SupabaseService {
       return existing['id'] as String;
     } else {
       // Insert new and return id
-      final result = await client.from('cart_items').insert({
-        'user_id': userId,
-        'book_id': bookId,
-        'quantity': quantity,
-      }).select('id').single();
+      final result = await client
+          .from('cart_items')
+          .insert({
+            'user_id': userId,
+            'book_id': bookId,
+            'quantity': quantity,
+          })
+          .select('id')
+          .single();
       return result['id'] as String;
     }
   }
@@ -473,15 +481,19 @@ class SupabaseService {
     if (cartItems.isEmpty) throw Exception('Cart is empty');
 
     // Create transaction
-    final transaction = await client.from('transactions').insert({
-      'user_id': userId,
-      'total_amount': totalAmount,
-      'shipping_address': shippingAddress,
-      'shipping_name': shippingName,
-      'shipping_phone': shippingPhone,
-      'payment_method': paymentMethod,
-      'notes': notes,
-    }).select().single();
+    final transaction = await client
+        .from('transactions')
+        .insert({
+          'user_id': userId,
+          'total_amount': totalAmount,
+          'shipping_address': shippingAddress,
+          'shipping_name': shippingName,
+          'shipping_phone': shippingPhone,
+          'payment_method': paymentMethod,
+          'notes': notes,
+        })
+        .select()
+        .single();
 
     // Create transaction items
     for (final cartItem in cartItems) {
@@ -508,18 +520,44 @@ class SupabaseService {
     return transaction;
   }
 
+  /// Update transaction status
+  Future<void> updateTransactionStatus({
+    required String transactionId,
+    required String status,
+    String? review,
+    double? rating,
+    DateTime? deliveredDate,
+    DateTime? autoAcceptDate,
+  }) async {
+    final Map<String, dynamic> updates = {
+      'status': status,
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+
+    if (review != null) updates['review'] = review;
+    if (rating != null) updates['rating'] = rating;
+    if (deliveredDate != null) {
+      updates['delivered_date'] = deliveredDate.toIso8601String();
+    }
+    if (autoAcceptDate != null) {
+      updates['auto_accept_date'] = autoAcceptDate.toIso8601String();
+    }
+
+    await client.from('transactions').update(updates).eq('id', transactionId);
+  }
+
   // ==================== STORAGE ====================
 
   /// Upload book image
   Future<String> uploadBookImage(String filePath, String fileName) async {
     final userId = currentUser?.id ?? 'public';
     final path = '$userId/$fileName';
-    
+
     final file = File(filePath);
     await client.storage
         .from(SupabaseConfig.bookImagesBucket)
         .upload(path, file);
-    
+
     return client.storage
         .from(SupabaseConfig.bookImagesBucket)
         .getPublicUrl(path);
@@ -546,13 +584,13 @@ class SupabaseService {
   /// Get total sales for current user's books
   Future<Map<String, dynamic>> getDashboardStats() async {
     final userId = currentUser?.id;
-    
+
     // Total sales
     final salesResponse = await client
         .from('transaction_items')
         .select('book_price, quantity, books!inner(seller_id)')
         .eq('books.seller_id', userId ?? '');
-    
+
     double totalSales = 0;
     int totalItemsSold = 0;
     for (final item in salesResponse) {
@@ -586,15 +624,16 @@ class SupabaseService {
     final response = await client
         .from('transaction_items')
         .select('book_price, quantity, books!inner(category)');
-    
+
     final Map<String, double> salesByCategory = {};
-    
+
     for (final item in response) {
       final category = item['books']['category'] as String;
       final amount = (item['book_price'] as num) * (item['quantity'] as num);
-      salesByCategory[category] = (salesByCategory[category] ?? 0) + amount.toDouble();
+      salesByCategory[category] =
+          (salesByCategory[category] ?? 0) + amount.toDouble();
     }
-    
+
     return salesByCategory;
   }
 
@@ -602,33 +641,38 @@ class SupabaseService {
   Future<List<Map<String, dynamic>>> getSalesTrend({int days = 7}) async {
     final now = DateTime.now();
     final startDate = now.subtract(Duration(days: days));
-    
+
     final response = await client
         .from('transactions')
         .select('total_amount, created_at')
         .gte('created_at', startDate.toIso8601String())
         .order('created_at');
-    
+
     // Group by date
     final Map<String, double> dailySales = {};
     for (int i = 0; i < days; i++) {
       final date = now.subtract(Duration(days: days - 1 - i));
-      final dateStr = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      final dateStr =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
       dailySales[dateStr] = 0;
     }
-    
+
     for (final item in response) {
       final date = DateTime.parse(item['created_at']);
-      final dateStr = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      final dateStr =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
       if (dailySales.containsKey(dateStr)) {
-        dailySales[dateStr] = dailySales[dateStr]! + (item['total_amount'] as num).toDouble();
+        dailySales[dateStr] =
+            dailySales[dateStr]! + (item['total_amount'] as num).toDouble();
       }
     }
-    
-    return dailySales.entries.map((e) => {
-      'date': e.key,
-      'amount': e.value,
-    }).toList();
+
+    return dailySales.entries
+        .map((e) => {
+              'date': e.key,
+              'amount': e.value,
+            })
+        .toList();
   }
 
   /// Get best selling book
@@ -641,5 +685,34 @@ class SupabaseService {
         .limit(1)
         .maybeSingle();
     return response;
+  }
+
+  /// Add review to book
+  Future<void> addBookReview({
+    required String bookId,
+    required double rating,
+    required String comment,
+  }) async {
+    final userId = currentUser?.id;
+    final userName = currentUser?.email?.split('@')[0] ?? 'Anonymous';
+
+    await client.from('book_reviews').insert({
+      'book_id': bookId,
+      'user_id': userId,
+      'user_name': userName,
+      'rating': rating,
+      'comment': comment,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  /// Get reviews for a book
+  Future<List<Map<String, dynamic>>> getBookReviews(String bookId) async {
+    final response = await client
+        .from('book_reviews')
+        .select()
+        .eq('book_id', bookId)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
   }
 }

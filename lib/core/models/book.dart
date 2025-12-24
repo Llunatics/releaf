@@ -111,6 +111,7 @@ class Book {
   final String? sellerName;
   final String? sellerLocation;
   final String? sellerId;
+  final List<Map<String, dynamic>>? reviews;
 
   Book({
     required this.id,
@@ -134,7 +135,18 @@ class Book {
     this.sellerName,
     this.sellerLocation,
     this.sellerId,
+    this.reviews,
   }) : addedDate = addedDate ?? DateTime.now();
+
+  // Calculate average rating from reviews
+  double get averageRating {
+    if (reviews == null || reviews!.isEmpty) return rating;
+    double sum = 0;
+    for (var review in reviews!) {
+      sum += (review['rating'] as num?)?.toDouble() ?? 0;
+    }
+    return sum / reviews!.length;
+  }
 
   /// Empty book constructor for fallback
   factory Book.empty() {
