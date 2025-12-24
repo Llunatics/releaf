@@ -4,6 +4,7 @@ import '../../core/models/transaction.dart';
 import '../../core/providers/app_state.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/page_transitions.dart';
+import '../../core/utils/toast_helper.dart';
 import '../auth/login_screen.dart';
 import '../products/add_book_screen.dart';
 import 'purchased_books_screen.dart';
@@ -1833,7 +1834,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Total Amount',
+                                    appState.tr('total_amount'),
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: textSecondary,
@@ -1851,7 +1852,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Date: ${transaction.date.day}/${transaction.date.month}/${transaction.date.year}',
+                                '${appState.tr('date')}: ${transaction.date.day}/${transaction.date.month}/${transaction.date.year}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: textSecondary,
@@ -1863,21 +1864,49 @@ If you have any questions about this Privacy Policy, please contact us at privac
                                   transaction.status !=
                                       TransactionStatus.cancelled) ...[
                                 const SizedBox(height: 12),
-                                OutlinedButton.icon(
-                                  onPressed: () {
-                                    _showUpdateStatusDialog(
-                                        context, appState, transaction, isDark);
-                                  },
-                                  icon: const Icon(Icons.update, size: 18),
-                                  label: const Text('Update Status'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: const Color(0xFF3B82F6),
-                                    side: const BorderSide(
-                                        color: Color(0xFF3B82F6)),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                                        const Color(0xFF8B5CF6).withValues(alpha: 0.05),
+                                      ],
+                                    ),
+                                    border: Border.all(
+                                      color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        _showUpdateStatusDialog(
+                                            context, appState, transaction, isDark);
+                                      },
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.swap_vert_rounded,
+                                              color: Color(0xFF3B82F6),
+                                              size: 18,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              appState.tr('update_status'),
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF3B82F6),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1886,98 +1915,138 @@ If you have any questions about this Privacy Policy, please contact us at privac
                               if (transaction.status ==
                                   TransactionStatus.shipped) ...[
                                 const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: OutlinedButton.icon(
-                                        onPressed: () async {
-                                          await appState
-                                              .markAsDelivered(transaction.id);
-                                          if (context.mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: const Row(
-                                                  children: [
-                                                    Icon(Icons.local_shipping,
-                                                        color: Colors.white),
-                                                    SizedBox(width: 12),
-                                                    Text(
-                                                        'Pesanan ditandai sudah sampai'),
-                                                  ],
-                                                ),
-                                                backgroundColor:
-                                                    const Color(0xFF3B82F6),
-                                                behavior:
-                                                    SnackBarBehavior.floating,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        const Color(0xFF8B5CF6).withValues(alpha: 0.12),
+                                        const Color(0xFF6366F1).withValues(alpha: 0.06),
+                                      ],
+                                    ),
+                                    border: Border.all(
+                                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.35),
+                                    ),
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        await appState.markAsDelivered(transaction.id);
+                                        if (context.mounted) {
+                                          ToastHelper.showSuccess(
+                                            context,
+                                            appState.tr('status_updated'),
+                                          );
+                                        }
+                                      },
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.home_rounded,
+                                              color: Color(0xFF8B5CF6),
+                                              size: 18,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              appState.tr('mark_delivered'),
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF8B5CF6),
                                               ),
-                                            );
-                                          }
-                                        },
-                                        icon: const Icon(Icons.local_shipping,
-                                            size: 18),
-                                        label:
-                                            const Text('Tandai Sudah Sampai'),
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor:
-                                              const Color(0xFF3B82F6),
-                                          side: const BorderSide(
-                                              color: Color(0xFF3B82F6)),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                               // Show accept button for delivered status
                               if (transaction.status ==
                                   TransactionStatus.delivered) ...[
                                 const SizedBox(height: 12),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton.icon(
-                                        onPressed: () {
-                                          _showAcceptOrderDialog(context,
-                                              appState, transaction, isDark);
-                                        },
-                                        icon: const Icon(
-                                            Icons.check_circle_outline,
-                                            size: 18),
-                                        label: const Text('Terima Pesanan'),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF10B981),
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF10B981),
+                                        Color(0xFF059669),
+                                      ],
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        _showAcceptOrderDialog(context,
+                                            appState, transaction, isDark);
+                                      },
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.check_circle_rounded,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              appState.tr('accept_order'),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                                 if (transaction.autoAcceptDate != null) ...[
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Auto-accept: ${transaction.autoAcceptDate!.day}/${transaction.autoAcceptDate!.month}/${transaction.autoAcceptDate!.year}',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: textSecondary,
-                                      fontStyle: FontStyle.italic,
+                                  const SizedBox(height: 6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFBBF24).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.timer_outlined,
+                                          size: 13,
+                                          color: const Color(0xFFF59E0B),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          '${appState.tr('auto_accept')}: ${transaction.autoAcceptDate!.day}/${transaction.autoAcceptDate!.month}/${transaction.autoAcceptDate!.year}',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: const Color(0xFFF59E0B),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -2563,12 +2632,62 @@ If you have any questions about this Privacy Policy, please contact us at privac
     }
   }
 
+  String _getLocalizedStatusLabel(TransactionStatus status, AppState appState) {
+    switch (status) {
+      case TransactionStatus.pending:
+        return appState.tr('status_pending');
+      case TransactionStatus.processing:
+        return appState.tr('status_processing');
+      case TransactionStatus.shipped:
+        return appState.tr('status_shipped');
+      case TransactionStatus.delivered:
+        return appState.tr('status_delivered');
+      case TransactionStatus.completed:
+        return appState.tr('status_completed');
+      case TransactionStatus.cancelled:
+        return appState.tr('status_cancelled');
+    }
+  }
+
+  String _getLocalizedStatusDesc(TransactionStatus status, AppState appState) {
+    switch (status) {
+      case TransactionStatus.pending:
+        return appState.tr('desc_pending');
+      case TransactionStatus.processing:
+        return appState.tr('desc_processing');
+      case TransactionStatus.shipped:
+        return appState.tr('desc_shipped');
+      case TransactionStatus.delivered:
+        return appState.tr('desc_delivered');
+      case TransactionStatus.completed:
+        return appState.tr('desc_completed');
+      case TransactionStatus.cancelled:
+        return appState.tr('desc_cancelled');
+    }
+  }
+
+  String _getStatusActionLabel(TransactionStatus status, AppState appState) {
+    switch (status) {
+      case TransactionStatus.processing:
+        return appState.tr('process_order');
+      case TransactionStatus.shipped:
+        return appState.tr('ship_order');
+      case TransactionStatus.delivered:
+        return appState.tr('mark_delivered');
+      case TransactionStatus.cancelled:
+        return appState.tr('cancel_order');
+      default:
+        return _getLocalizedStatusLabel(status, appState);
+    }
+  }
+
   void _showUpdateStatusDialog(BuildContext context, AppState appState,
       BookTransaction transaction, bool isDark) {
     final cardColor = isDark ? const Color(0xFF161B22) : Colors.white;
     final textPrimary = isDark ? Colors.white : const Color(0xFF1F2937);
     final textSecondary =
         isDark ? const Color(0xFF8B949E) : const Color(0xFF6B7280);
+    final surfaceColor = isDark ? const Color(0xFF0D1117) : const Color(0xFFF8FAFC);
 
     // Available next statuses based on current status
     List<TransactionStatus> availableStatuses = [];
@@ -2589,7 +2708,6 @@ If you have any questions about this Privacy Policy, please contact us at privac
         availableStatuses = [TransactionStatus.delivered];
         break;
       case TransactionStatus.delivered:
-        // Can only be completed by buyer through accept dialog
         availableStatuses = [];
         break;
       default:
@@ -2602,132 +2720,234 @@ If you have any questions about this Privacy Policy, please contact us at privac
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: cardColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        contentPadding: const EdgeInsets.all(24),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.update,
-                      color: Color(0xFF3B82F6), size: 28),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Update Status',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: textPrimary,
-                        ),
-                      ),
-                      Text(
-                        'Order #${transaction.id.substring(0, 8)}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: textSecondary,
-                        ),
-                      ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        contentPadding: EdgeInsets.zero,
+        content: Container(
+          width: double.maxFinite,
+          constraints: const BoxConstraints(maxWidth: 340),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with gradient
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF3B82F6).withValues(alpha: 0.15),
+                      const Color(0xFF8B5CF6).withValues(alpha: 0.08),
                     ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Current Status: ${transaction.status.label}',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textSecondary,
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.swap_vert_rounded,
+                        color: Color(0xFF3B82F6),
+                        size: 26,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            appState.tr('update_status'),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: textPrimary,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${appState.tr('order')} #${transaction.id.substring(0, 8).toUpperCase()}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: textSecondary,
+                        size: 22,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: surfaceColor,
+                        padding: const EdgeInsets.all(8),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Select New Status:',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textPrimary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...availableStatuses.map((status) => Container(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      await appState.updateOrderStatus(transaction.id, status);
-                      if (context.mounted) {
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Current status chip
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: surfaceColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: _getStatusColor(transaction.status).withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _getStatusIcon(transaction.status),
+                            color: _getStatusColor(transaction.status),
+                            size: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(Icons.check_circle_rounded,
-                                    color: Colors.white),
-                                const SizedBox(width: 12),
-                                Text('Status updated to ${status.label}'),
+                                Text(
+                                  appState.tr('current_status'),
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: textSecondary,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                Text(
+                                  _getLocalizedStatusLabel(transaction.status, appState),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: _getStatusColor(transaction.status),
+                                  ),
+                                ),
                               ],
                             ),
-                            backgroundColor: const Color(0xFF10B981),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
                           ),
-                        );
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: _getStatusColor(status),
-                      side: BorderSide(color: _getStatusColor(status)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(_getStatusIcon(status), size: 20),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                status.label,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: _getStatusColor(status),
+                    const SizedBox(height: 18),
+                    Text(
+                      appState.tr('select_new_status'),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Status buttons
+                    ...availableStatuses.map((status) {
+                      final isCancel = status == TransactionStatus.cancelled;
+                      final statusColor = _getStatusColor(status);
+                      
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () async {
+                              await appState.updateOrderStatus(transaction.id, status);
+                              if (context.mounted) {
+                                Navigator.pop(ctx);
+                                ToastHelper.showSuccess(
+                                  context,
+                                  appState.tr('status_updated'),
+                                );
+                              }
+                            },
+                            borderRadius: BorderRadius.circular(14),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: isCancel
+                                    ? statusColor.withValues(alpha: 0.08)
+                                    : statusColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: statusColor.withValues(alpha: 0.25),
+                                  width: 1.5,
                                 ),
                               ),
-                              Text(
-                                status.description,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: textSecondary,
-                                ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: statusColor.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      _getStatusIcon(status),
+                                      color: statusColor,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _getStatusActionLabel(status, appState),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: statusColor,
+                                          ),
+                                        ),
+                                        Text(
+                                          _getLocalizedStatusDesc(status, appState),
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    color: statusColor.withValues(alpha: 0.6),
+                                    size: 16,
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )),
-          ],
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -2756,6 +2976,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
     final textPrimary = isDark ? Colors.white : const Color(0xFF1F2937);
     final textSecondary =
         isDark ? const Color(0xFF8B949E) : const Color(0xFF6B7280);
+    final surfaceColor = isDark ? const Color(0xFF0D1117) : const Color(0xFFF8FAFC);
 
     final reviewController = TextEditingController();
     double rating = 5.0;
@@ -2765,172 +2986,272 @@ If you have any questions about this Privacy Policy, please contact us at privac
       builder: (ctx) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           backgroundColor: cardColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          contentPadding: const EdgeInsets.all(24),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.check_circle,
-                          color: Color(0xFF10B981), size: 28),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Konfirmasi Penerimaan',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: textPrimary,
-                            ),
-                          ),
-                          Text(
-                            'Berikan review untuk pesanan ini',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: textSecondary,
-                            ),
-                          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            width: double.maxFinite,
+            constraints: const BoxConstraints(maxWidth: 360),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header with gradient
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF10B981).withValues(alpha: 0.15),
+                          const Color(0xFF059669).withValues(alpha: 0.08),
                         ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Rating',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (index) {
-                    return IconButton(
-                      onPressed: () {
-                        setState(() {
-                          rating = (index + 1).toDouble();
-                        });
-                      },
-                      icon: Icon(
-                        index < rating ? Icons.star : Icons.star_border,
-                        color: const Color(0xFFFBBF24),
-                        size: 36,
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Review (Opsional)',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: reviewController,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    hintText: 'Bagaimana pengalaman Anda dengan produk ini?',
-                    hintStyle:
-                        TextStyle(color: textSecondary.withValues(alpha: 0.5)),
-                    filled: true,
-                    fillColor: isDark
-                        ? const Color(0xFF0D1117)
-                        : const Color(0xFFF3F4F6),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  style: TextStyle(color: textPrimary),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        child: Text(
-                          'Batal',
-                          style: TextStyle(
-                            color: textSecondary,
-                            fontWeight: FontWeight.w600,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(
+                            Icons.check_circle_rounded,
+                            color: Color(0xFF10B981),
+                            size: 26,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await appState.acceptOrder(
-                            transaction.id,
-                            review: reviewController.text.isNotEmpty
-                                ? reviewController.text
-                                : null,
-                            rating: rating,
-                          );
-                          if (context.mounted) {
-                            Navigator.pop(ctx);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Row(
-                                  children: [
-                                    Icon(Icons.check_circle_rounded,
-                                        color: Colors.white),
-                                    SizedBox(width: 12),
-                                    Text('Pesanan berhasil dikonfirmasi!'),
-                                  ],
-                                ),
-                                backgroundColor: const Color(0xFF10B981),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                appState.tr('confirm_receipt'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: textPrimary,
+                                  letterSpacing: -0.3,
                                 ),
                               ),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF10B981),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                              const SizedBox(height: 2),
+                              Text(
+                                appState.tr('give_review'),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: textSecondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: const Text(
-                          'Konfirmasi',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        IconButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: textSecondary,
+                            size: 22,
+                          ),
+                          style: IconButton.styleFrom(
+                            backgroundColor: surfaceColor,
+                            padding: const EdgeInsets.all(8),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  // Content
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appState.tr('rating'),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Star rating
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: surfaceColor,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFFFBBF24).withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(5, (index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    rating = (index + 1).toDouble();
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Icon(
+                                    index < rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                                    color: const Color(0xFFFBBF24),
+                                    size: 38,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        Text(
+                          appState.tr('review_optional'),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: reviewController,
+                          maxLines: 4,
+                          decoration: InputDecoration(
+                            hintText: appState.tr('review_placeholder'),
+                            hintStyle: TextStyle(
+                              color: textSecondary.withValues(alpha: 0.6),
+                              fontSize: 13,
+                            ),
+                            filled: true,
+                            fillColor: surfaceColor,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide(
+                                color: textSecondary.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide(
+                                color: textSecondary.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF10B981),
+                                width: 1.5,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.all(14),
+                          ),
+                          style: TextStyle(color: textPrimary, fontSize: 14),
+                        ),
+                        const SizedBox(height: 24),
+                        // Action buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: textSecondary.withValues(alpha: 0.25),
+                                  ),
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () => Navigator.pop(ctx),
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      child: Text(
+                                        appState.tr('cancel'),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: textSecondary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF10B981),
+                                      Color(0xFF059669),
+                                    ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      await appState.acceptOrder(
+                                        transaction.id,
+                                        review: reviewController.text.isNotEmpty
+                                            ? reviewController.text
+                                            : null,
+                                        rating: rating,
+                                      );
+                                      if (context.mounted) {
+                                        Navigator.pop(ctx);
+                                        ToastHelper.showSuccess(
+                                          context,
+                                          appState.tr('order_confirmed'),
+                                        );
+                                      }
+                                    },
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      child: Text(
+                                        appState.tr('confirm'),
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
