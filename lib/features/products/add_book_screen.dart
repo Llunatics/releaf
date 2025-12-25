@@ -86,12 +86,15 @@ class _AddBookScreenState extends State<AddBookScreen> {
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
+    final isId = appState.language == 'id';
 
     return Scaffold(
       backgroundColor:
           isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Book' : 'Add New Book'),
+        title: Text(_isEditing
+            ? (isId ? 'Edit Buku' : 'Edit Book')
+            : (isId ? 'Tambah Buku Baru' : 'Add New Book')),
         backgroundColor:
             isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
         actions: [
@@ -341,7 +344,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     ),
                   ),
                   child: Text(
-                    _isEditing ? 'Save Changes' : 'Add Book',
+                    _isEditing
+                        ? (isId ? 'Simpan Perubahan' : 'Save Changes')
+                        : (isId ? 'Tambah Buku' : 'Add Book'),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

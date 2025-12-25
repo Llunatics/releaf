@@ -39,19 +39,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
         // Clean the scanned code - remove dashes and spaces
         final cleanCode = code.replaceAll('-', '').replaceAll(' ', '').trim();
-        
+
         // Search for book by ISBN - try multiple matching strategies
         Book? foundBook;
-        
+
         for (final book in appState.books) {
-          final cleanIsbn = book.isbn.replaceAll('-', '').replaceAll(' ', '').trim();
-          
+          final cleanIsbn =
+              book.isbn.replaceAll('-', '').replaceAll(' ', '').trim();
+
           // Exact match
           if (cleanIsbn == cleanCode) {
             foundBook = book;
             break;
           }
-          
+
           // ISBN-13 to ISBN-10 conversion check (last 10 digits without check digit)
           if (cleanCode.length == 13 && cleanIsbn.length == 10) {
             if (cleanCode.substring(3, 12) == cleanIsbn.substring(0, 9)) {
@@ -59,7 +60,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
               break;
             }
           }
-          
+
           // ISBN-10 to ISBN-13 check
           if (cleanCode.length == 10 && cleanIsbn.length == 13) {
             if (cleanIsbn.substring(3, 12) == cleanCode.substring(0, 9)) {
@@ -67,7 +68,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
               break;
             }
           }
-          
+
           // Partial match - contains
           if (cleanIsbn.contains(cleanCode) || cleanCode.contains(cleanIsbn)) {
             foundBook = book;
@@ -81,10 +82,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
     }
   }
 
-  void _showResult(BuildContext context, String code, Book? book, AppState appState) {
+  void _showResult(
+      BuildContext context, String code, Book? book, AppState appState) {
     final isDark = appState.isDarkMode;
     final bool bookFound = book != null;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -102,7 +104,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight,
+                  color: isDark
+                      ? AppColors.textTertiaryDark
+                      : AppColors.textTertiaryLight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -110,31 +114,39 @@ class _ScannerScreenState extends State<ScannerScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: bookFound 
+                  color: bookFound
                       ? AppColors.success.withValues(alpha: 0.1)
                       : AppColors.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  bookFound ? Icons.check_circle_rounded : Icons.search_off_rounded,
+                  bookFound
+                      ? Icons.check_circle_rounded
+                      : Icons.search_off_rounded,
                   color: bookFound ? AppColors.success : AppColors.error,
                   size: 48,
                 ),
               ).animate().scale(duration: 300.ms),
               const SizedBox(height: 16),
               Text(
-                bookFound 
-                    ? (appState.language == 'id' ? 'Buku Ditemukan!' : 'Book Found!')
-                    : (appState.language == 'id' ? 'Buku Tidak Ditemukan' : 'Book Not Found'),
+                bookFound
+                    ? (appState.language == 'id'
+                        ? 'Buku Ditemukan!'
+                        : 'Book Found!')
+                    : (appState.language == 'id'
+                        ? 'Buku Tidak Ditemukan'
+                        : 'Book Not Found'),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
               const SizedBox(height: 8),
               Text(
                 'ISBN: $code',
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
                 ),
               ).animate().fadeIn(duration: 300.ms, delay: 150.ms),
               const SizedBox(height: 24),
@@ -142,7 +154,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.cardDark : AppColors.backgroundLight,
+                    color:
+                        isDark ? AppColors.cardDark : AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -176,7 +189,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                                color: isDark
+                                    ? Colors.white
+                                    : AppColors.textPrimaryLight,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -184,7 +199,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                               book.author,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondaryLight,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -205,7 +222,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.cardDark : AppColors.backgroundLight,
+                    color:
+                        isDark ? AppColors.cardDark : AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -213,14 +231,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       Icon(
                         Icons.menu_book_rounded,
                         size: 48,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Tidak ada buku dengan ISBN ini di katalog kami',
+                        appState.language == 'id'
+                            ? 'Tidak ada buku dengan ISBN ini di katalog kami'
+                            : 'No book with this ISBN in our catalog',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
                         ),
                       ),
                     ],
@@ -245,7 +269,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(appState.language == 'id' ? 'Scan Lagi' : 'Scan Again'),
+                      child: Text(appState.language == 'id'
+                          ? 'Scan Lagi'
+                          : 'Scan Again'),
                     ),
                   ),
                   if (bookFound) ...[
@@ -256,7 +282,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           Navigator.pop(context);
                           Navigator.push(
                             context,
-                            PageTransitions.scaleUp(ProductDetailScreen(book: book)),
+                            PageTransitions.scaleUp(
+                                ProductDetailScreen(book: book)),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -267,7 +294,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           ),
                         ),
                         child: Text(
-                          appState.language == 'id' ? 'Lihat Detail' : 'View Details',
+                          appState.language == 'id'
+                              ? 'Lihat Detail'
+                              : 'View Details',
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
@@ -299,7 +328,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Scan Barcode/QR'),
+        title: Text(
+            appState.language == 'id' ? 'Scan Barcode/QR' : 'Scan Barcode/QR'),
       ),
       body: Stack(
         children: [
@@ -325,10 +355,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
               child: Stack(
                 children: [
                   // Corner indicators
-                  Positioned(top: -3, left: -3, child: _buildCorner(true, true)),
-                  Positioned(top: -3, right: -3, child: _buildCorner(true, false)),
-                  Positioned(bottom: -3, left: -3, child: _buildCorner(false, true)),
-                  Positioned(bottom: -3, right: -3, child: _buildCorner(false, false)),
+                  Positioned(
+                      top: -3, left: -3, child: _buildCorner(true, true)),
+                  Positioned(
+                      top: -3, right: -3, child: _buildCorner(true, false)),
+                  Positioned(
+                      bottom: -3, left: -3, child: _buildCorner(false, true)),
+                  Positioned(
+                      bottom: -3, right: -3, child: _buildCorner(false, false)),
                   // Scanning line animation
                   if (_isScanning)
                     AnimatedBuilder(
@@ -350,7 +384,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                               ),
                             ),
                           )
-                              .animate(onPlay: (controller) => controller.repeat())
+                              .animate(
+                                  onPlay: (controller) => controller.repeat())
                               .moveY(begin: 0, end: 260, duration: 2000.ms)
                               .fadeIn(duration: 300.ms)
                               .fadeOut(delay: 1700.ms, duration: 300.ms),
@@ -369,7 +404,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(24),
@@ -431,16 +467,26 @@ class _ScannerScreenState extends State<ScannerScreen> {
       height: 30,
       decoration: BoxDecoration(
         border: Border(
-          top: isTop ? const BorderSide(color: AppColors.primaryBlue, width: 4) : BorderSide.none,
-          bottom: !isTop ? const BorderSide(color: AppColors.primaryBlue, width: 4) : BorderSide.none,
-          left: isLeft ? const BorderSide(color: AppColors.primaryBlue, width: 4) : BorderSide.none,
-          right: !isLeft ? const BorderSide(color: AppColors.primaryBlue, width: 4) : BorderSide.none,
+          top: isTop
+              ? const BorderSide(color: AppColors.primaryBlue, width: 4)
+              : BorderSide.none,
+          bottom: !isTop
+              ? const BorderSide(color: AppColors.primaryBlue, width: 4)
+              : BorderSide.none,
+          left: isLeft
+              ? const BorderSide(color: AppColors.primaryBlue, width: 4)
+              : BorderSide.none,
+          right: !isLeft
+              ? const BorderSide(color: AppColors.primaryBlue, width: 4)
+              : BorderSide.none,
         ),
         borderRadius: BorderRadius.only(
           topLeft: isTop && isLeft ? const Radius.circular(12) : Radius.zero,
           topRight: isTop && !isLeft ? const Radius.circular(12) : Radius.zero,
-          bottomLeft: !isTop && isLeft ? const Radius.circular(12) : Radius.zero,
-          bottomRight: !isTop && !isLeft ? const Radius.circular(12) : Radius.zero,
+          bottomLeft:
+              !isTop && isLeft ? const Radius.circular(12) : Radius.zero,
+          bottomRight:
+              !isTop && !isLeft ? const Radius.circular(12) : Radius.zero,
         ),
       ),
     );
@@ -448,8 +494,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   String _formatPrice(int price) {
     return price.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        );
   }
 }

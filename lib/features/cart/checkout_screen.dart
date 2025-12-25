@@ -18,7 +18,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _notesController = TextEditingController();
-  
+
   String _selectedPayment = 'transfer';
   bool _isProcessing = false;
 
@@ -36,10 +36,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final appState = AppStateProvider.of(context);
     final isDark = appState.isDarkMode;
     final isId = appState.language == 'id';
-    final currencyFormat = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    final currencyFormat =
+        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FE),
+      backgroundColor:
+          isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FE),
       body: CustomScrollView(
         slivers: [
           // Clean White App Bar
@@ -79,7 +81,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
           ),
-          
+
           // Content
           SliverToBoxAdapter(
             child: Form(
@@ -90,7 +92,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Order Summary Section
-                    _buildSectionTitle(isId ? 'Ringkasan Pesanan' : 'Order Summary', Icons.shopping_bag_outlined, isDark),
+                    _buildSectionTitle(
+                        isId ? 'Ringkasan Pesanan' : 'Order Summary',
+                        Icons.shopping_bag_outlined,
+                        isDark),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -114,7 +119,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             return Column(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
                                   child: Row(
                                     children: [
                                       ClipRRect(
@@ -123,7 +129,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           width: 60,
                                           height: 80,
                                           decoration: BoxDecoration(
-                                            color: isDark ? AppColors.surfaceDark : const Color(0xFFF5F5F5),
+                                            color: isDark
+                                                ? AppColors.surfaceDark
+                                                : const Color(0xFFF5F5F5),
                                           ),
                                           child: Image.network(
                                             item.book.imageUrl,
@@ -138,7 +146,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               item.book.title,
@@ -147,7 +156,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
-                                                color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                                                color: isDark
+                                                    ? Colors.white
+                                                    : const Color(0xFF1A1A2E),
                                               ),
                                             ),
                                             const SizedBox(height: 4),
@@ -160,13 +171,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                             ),
                                             const SizedBox(height: 8),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
                                               decoration: BoxDecoration(
-                                                color: const Color(0xFF667EEA).withValues(alpha: 0.1),
-                                                borderRadius: BorderRadius.circular(8),
+                                                color: const Color(0xFF667EEA)
+                                                    .withValues(alpha: 0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
                                               child: Text(
-                                                'Jml: ${item.quantity}',
+                                                isId
+                                                    ? 'Jml: ${item.quantity}'
+                                                    : 'Qty: ${item.quantity}',
                                                 style: const TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
@@ -188,14 +206,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     ],
                                   ),
                                 ),
-                                if (!isLast) Divider(height: 1, color: isDark ? Colors.grey.shade800 : Colors.grey.shade100),
+                                if (!isLast)
+                                  Divider(
+                                      height: 1,
+                                      color: isDark
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade100),
                               ],
                             );
                           }),
-                          Divider(height: 32, color: isDark ? Colors.grey.shade700 : Colors.grey.shade200),
-                          _buildPriceRow(isId ? 'Subtotal' : 'Subtotal', currencyFormat.format(appState.cartTotal), isDark),
+                          Divider(
+                              height: 32,
+                              color: isDark
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade200),
+                          _buildPriceRow(
+                              isId ? 'Subtotal' : 'Subtotal',
+                              currencyFormat.format(appState.cartTotal),
+                              isDark),
                           const SizedBox(height: 8),
-                          _buildPriceRow(isId ? 'Ongkos Kirim' : 'Shipping', currencyFormat.format(15000), isDark),
+                          _buildPriceRow(isId ? 'Ongkos Kirim' : 'Shipping',
+                              currencyFormat.format(15000), isDark),
                           const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,11 +236,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
-                                  color: isDark ? Colors.white : const Color(0xFF1A1A2E),
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF1A1A2E),
                                 ),
                               ),
                               Text(
-                                currencyFormat.format(appState.cartTotal + 15000),
+                                currencyFormat
+                                    .format(appState.cartTotal + 15000),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 22,
@@ -222,10 +256,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ).animate().fadeIn(duration: 300.ms),
 
-                          const SizedBox(height: 28),
+                    const SizedBox(height: 28),
 
                     // Shipping Information
-                    _buildSectionTitle(isId ? 'Informasi Pengiriman' : 'Shipping Information', Icons.local_shipping_outlined, isDark),
+                    _buildSectionTitle(
+                        isId ? 'Informasi Pengiriman' : 'Shipping Information',
+                        Icons.local_shipping_outlined,
+                        isDark),
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.all(20),
@@ -246,7 +283,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             controller: _nameController,
                             label: isId ? 'Nama Penerima' : 'Recipient Name',
                             icon: Icons.person_outline,
-                            validator: (value) => value?.isEmpty ?? true ? (isId ? 'Nama wajib diisi' : 'Name is required') : null,
+                            validator: (value) => value?.isEmpty ?? true
+                                ? (isId
+                                    ? 'Nama wajib diisi'
+                                    : 'Name is required')
+                                : null,
                             isDark: isDark,
                           ),
                           const SizedBox(height: 16),
@@ -255,7 +296,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             label: isId ? 'Nomor Telepon' : 'Phone Number',
                             icon: Icons.phone_outlined,
                             keyboardType: TextInputType.phone,
-                            validator: (value) => value?.isEmpty ?? true ? (isId ? 'Nomor telepon wajib diisi' : 'Phone is required') : null,
+                            validator: (value) => value?.isEmpty ?? true
+                                ? (isId
+                                    ? 'Nomor telepon wajib diisi'
+                                    : 'Phone is required')
+                                : null,
                             isDark: isDark,
                           ),
                           const SizedBox(height: 16),
@@ -264,13 +309,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             label: isId ? 'Alamat Lengkap' : 'Full Address',
                             icon: Icons.location_on_outlined,
                             maxLines: 3,
-                            validator: (value) => value?.isEmpty ?? true ? (isId ? 'Alamat wajib diisi' : 'Address is required') : null,
+                            validator: (value) => value?.isEmpty ?? true
+                                ? (isId
+                                    ? 'Alamat wajib diisi'
+                                    : 'Address is required')
+                                : null,
                             isDark: isDark,
                           ),
                           const SizedBox(height: 16),
                           _buildModernTextField(
                             controller: _notesController,
-                            label: isId ? 'Catatan (Opsional)' : 'Notes (Optional)',
+                            label: isId
+                                ? 'Catatan (Opsional)'
+                                : 'Notes (Optional)',
                             icon: Icons.note_outlined,
                             maxLines: 2,
                             isDark: isDark,
@@ -282,7 +333,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     const SizedBox(height: 28),
 
                     // Payment Method
-                    _buildSectionTitle(isId ? 'Metode Pembayaran' : 'Payment Method', Icons.payment_outlined, isDark),
+                    _buildSectionTitle(
+                        isId ? 'Metode Pembayaran' : 'Payment Method',
+                        Icons.payment_outlined,
+                        isDark),
                     const SizedBox(height: 16),
                     Container(
                       decoration: BoxDecoration(
@@ -299,27 +353,41 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       child: Column(
                         children: [
                           _buildModernPaymentOption(
-                            isId ? 'Transfer Bank' : 'Bank Transfer', 
-                            isId ? 'Transfer ke rekening bank' : 'Transfer to bank account', 
-                            'transfer', 
-                            Icons.account_balance_outlined, 
+                            isId ? 'Transfer Bank' : 'Bank Transfer',
+                            isId
+                                ? 'Transfer ke rekening bank'
+                                : 'Transfer to bank account',
+                            'transfer',
+                            Icons.account_balance_outlined,
                             isDark,
                             isFirst: true,
                           ),
-                          Divider(height: 1, color: isDark ? Colors.grey.shade800 : Colors.grey.shade100),
+                          Divider(
+                              height: 1,
+                              color: isDark
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade100),
                           _buildModernPaymentOption(
-                            'E-Wallet', 
-                            isId ? 'GoPay, OVO, DANA, dll' : 'GoPay, OVO, DANA, etc.', 
-                            'ewallet', 
-                            Icons.wallet_outlined, 
+                            'E-Wallet',
+                            isId
+                                ? 'GoPay, OVO, DANA, dll'
+                                : 'GoPay, OVO, DANA, etc.',
+                            'ewallet',
+                            Icons.wallet_outlined,
                             isDark,
                           ),
-                          Divider(height: 1, color: isDark ? Colors.grey.shade800 : Colors.grey.shade100),
+                          Divider(
+                              height: 1,
+                              color: isDark
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade100),
                           _buildModernPaymentOption(
-                            isId ? 'Bayar di Tempat' : 'Cash on Delivery', 
-                            isId ? 'Bayar saat barang diterima' : 'Pay when goods are received', 
-                            'cod', 
-                            Icons.local_shipping_outlined, 
+                            isId ? 'Bayar di Tempat' : 'Cash on Delivery',
+                            isId
+                                ? 'Bayar saat barang diterima'
+                                : 'Pay when goods are received',
+                            'cod',
+                            Icons.local_shipping_outlined,
                             isDark,
                             isLast: true,
                           ),
@@ -351,7 +419,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: SizedBox(
             height: 56,
             child: ElevatedButton(
-              onPressed: _isProcessing ? null : () => _placeOrder(context, appState),
+              onPressed:
+                  _isProcessing ? null : () => _placeOrder(context, appState),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF667EEA),
                 foregroundColor: Colors.white,
@@ -481,14 +550,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: Colors.red.shade400, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }
 
-  Widget _buildModernPaymentOption(String title, String desc, String value, IconData icon, bool isDark, {bool isFirst = false, bool isLast = false}) {
+  Widget _buildModernPaymentOption(
+      String title, String desc, String value, IconData icon, bool isDark,
+      {bool isFirst = false, bool isLast = false}) {
     final isSelected = _selectedPayment == value;
-    
+
     return InkWell(
       onTap: () => setState(() => _selectedPayment = value),
       borderRadius: BorderRadius.vertical(
@@ -498,7 +570,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF667EEA).withValues(alpha: 0.05) : null,
+          color: isSelected
+              ? const Color(0xFF667EEA).withValues(alpha: 0.05)
+              : null,
           borderRadius: BorderRadius.vertical(
             top: isFirst ? const Radius.circular(20) : Radius.zero,
             bottom: isLast ? const Radius.circular(20) : Radius.zero,
@@ -516,7 +590,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               child: Icon(
                 icon,
-                color: isSelected ? const Color(0xFF667EEA) : Colors.grey.shade500,
+                color:
+                    isSelected ? const Color(0xFF667EEA) : Colors.grey.shade500,
                 size: 24,
               ),
             ),
@@ -530,7 +605,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
-                      color: isSelected ? const Color(0xFF667EEA) : (isDark ? Colors.white : const Color(0xFF1A1A2E)),
+                      color: isSelected
+                          ? const Color(0xFF667EEA)
+                          : (isDark ? Colors.white : const Color(0xFF1A1A2E)),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -550,10 +627,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? const Color(0xFF667EEA) : Colors.grey.shade300,
+                  color: isSelected
+                      ? const Color(0xFF667EEA)
+                      : Colors.grey.shade300,
                   width: 2,
                 ),
-                color: isSelected ? const Color(0xFF667EEA) : Colors.transparent,
+                color:
+                    isSelected ? const Color(0xFF667EEA) : Colors.transparent,
               ),
               child: isSelected
                   ? const Icon(Icons.check, color: Colors.white, size: 16)
@@ -580,9 +660,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
 
     if (!context.mounted || transaction == null) return;
-    
+
     setState(() => _isProcessing = false);
-    
+
     // Show modern success dialog
     showDialog(
       context: context,
@@ -590,82 +670,88 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       builder: (dialogContext) {
         final isId = appState.language == 'id';
         return Dialog(
-        backgroundColor: appState.isDarkMode ? AppColors.surfaceDark : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.green.shade400, Colors.green.shade600],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.check, color: Colors.white, size: 48),
-              ).animate().scale(duration: 400.ms),
-              const SizedBox(height: 24),
-              Text(
-                isId ? 'Pesanan Berhasil!' : 'Order Successful!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: appState.isDarkMode ? Colors.white : const Color(0xFF1A1A2E),
-                ),
-              ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
-              const SizedBox(height: 8),
-              Text(
-                'Order #${transaction.id.substring(0, 8).toUpperCase()}',
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ).animate().fadeIn(duration: 300.ms, delay: 300.ms),
-              const SizedBox(height: 12),
-              Text(
-                isId 
-                    ? 'Terima kasih telah berbelanja!\nAnda akan segera menerima konfirmasi.'
-                    : 'Thank you for shopping!\nYou will receive a confirmation soon.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                  height: 1.5,
-                ),
-              ).animate().fadeIn(duration: 300.ms, delay: 400.ms),
-              const SizedBox(height: 28),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const MainScreen()),
-                      (route) => false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF667EEA),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+          backgroundColor:
+              appState.isDarkMode ? AppColors.surfaceDark : Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade400, Colors.green.shade600],
                     ),
-                    elevation: 0,
+                    shape: BoxShape.circle,
                   ),
-                  child: Text(
-                    isId ? 'Kembali ke Beranda' : 'Back to Home',
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  child: const Icon(Icons.check, color: Colors.white, size: 48),
+                ).animate().scale(duration: 400.ms),
+                const SizedBox(height: 24),
+                Text(
+                  isId ? 'Pesanan Berhasil!' : 'Order Successful!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: appState.isDarkMode
+                        ? Colors.white
+                        : const Color(0xFF1A1A2E),
                   ),
-                ),
-              ).animate().fadeIn(duration: 300.ms, delay: 500.ms),
-            ],
+                ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+                const SizedBox(height: 8),
+                Text(
+                  'Order #${transaction.id.substring(0, 8).toUpperCase()}',
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ).animate().fadeIn(duration: 300.ms, delay: 300.ms),
+                const SizedBox(height: 12),
+                Text(
+                  isId
+                      ? 'Terima kasih telah berbelanja!\nAnda akan segera menerima konfirmasi.'
+                      : 'Thank you for shopping!\nYou will receive a confirmation soon.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                    height: 1.5,
+                  ),
+                ).animate().fadeIn(duration: 300.ms, delay: 400.ms),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const MainScreen()),
+                        (route) => false,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF667EEA),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      isId ? 'Kembali ke Beranda' : 'Back to Home',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                  ),
+                ).animate().fadeIn(duration: 300.ms, delay: 500.ms),
+              ],
+            ),
           ),
-        ),
-      );
+        );
       },
     );
   }

@@ -46,9 +46,9 @@ class _SearchScreenState extends State<SearchScreen> {
     final lowercaseQuery = query.toLowerCase();
     final results = appState.books.where((book) {
       return book.title.toLowerCase().contains(lowercaseQuery) ||
-             book.author.toLowerCase().contains(lowercaseQuery) ||
-             book.category.toLowerCase().contains(lowercaseQuery) ||
-             book.isbn.toLowerCase().contains(lowercaseQuery);
+          book.author.toLowerCase().contains(lowercaseQuery) ||
+          book.category.toLowerCase().contains(lowercaseQuery) ||
+          book.isbn.toLowerCase().contains(lowercaseQuery);
     }).toList();
 
     setState(() {
@@ -63,9 +63,11 @@ class _SearchScreenState extends State<SearchScreen> {
     final isDark = appState.isDarkMode;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       appBar: AppBar(
-        backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        backgroundColor:
+            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
         title: TextField(
           controller: _searchController,
           focusNode: _focusNode,
@@ -74,22 +76,24 @@ class _SearchScreenState extends State<SearchScreen> {
             color: isDark ? Colors.white : AppColors.textPrimaryLight,
           ),
           decoration: InputDecoration(
-            hintText: appState.language == 'id' 
+            hintText: appState.language == 'id'
                 ? 'Cari buku, penulis, ISBN...'
                 : 'Search books, authors, ISBN...',
             hintStyle: TextStyle(
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
             ),
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
-              ? IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                    _performSearch('', appState);
-                  },
-                  icon: const Icon(Icons.clear_rounded),
-                )
-              : null,
+                ? IconButton(
+                    onPressed: () {
+                      _searchController.clear();
+                      _performSearch('', appState);
+                    },
+                    icon: const Icon(Icons.clear_rounded),
+                  )
+                : null,
           ),
         ),
       ),
@@ -109,9 +113,15 @@ class _SearchScreenState extends State<SearchScreen> {
     return _buildResults(context, isDark, appState);
   }
 
-  Widget _buildSuggestions(BuildContext context, AppState appState, bool isDark) {
-    final recentSearches = ['Fiksi', 'Self-Help', 'Atomic Habits', 'Romansa'];
-    final popularCategories = ['Fiksi', 'Non-Fiksi', 'Pendidikan', 'Self-Help', 'Biografi'];
+  Widget _buildSuggestions(
+      BuildContext context, AppState appState, bool isDark) {
+    final isId = appState.language == 'id';
+    final recentSearches = isId
+        ? ['Fiksi', 'Self-Help', 'Atomic Habits', 'Romansa']
+        : ['Fiction', 'Self-Help', 'Atomic Habits', 'Romance'];
+    final popularCategories = isId
+        ? ['Fiksi', 'Non-Fiksi', 'Pendidikan', 'Self-Help', 'Biografi']
+        : ['Fiction', 'Non-Fiction', 'Education', 'Self-Help', 'Biography'];
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -119,10 +129,12 @@ class _SearchScreenState extends State<SearchScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            appState.language == 'id' ? 'Pencarian Terakhir' : 'Recent Searches',
+            appState.language == 'id'
+                ? 'Pencarian Terakhir'
+                : 'Recent Searches',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ).animate().fadeIn(duration: 300.ms),
           const SizedBox(height: 12),
           Wrap(
@@ -140,29 +152,30 @@ class _SearchScreenState extends State<SearchScreen> {
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                   ),
                   deleteIcon: Icon(
-                    Icons.close, 
+                    Icons.close,
                     size: 16,
                     color: isDark ? Colors.white70 : const Color(0xFF64748B),
                   ),
                   onDeleted: () {},
-                  backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+                  backgroundColor:
+                      isDark ? AppColors.surfaceDark : Colors.white,
                   side: BorderSide(
-                    color: isDark 
-                      ? AppColors.textTertiaryDark.withValues(alpha: 0.2)
-                      : AppColors.textTertiaryLight.withValues(alpha: 0.3),
+                    color: isDark
+                        ? AppColors.textTertiaryDark.withValues(alpha: 0.2)
+                        : AppColors.textTertiaryLight.withValues(alpha: 0.3),
                   ),
                 ),
               );
             }).toList(),
           ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
-
           const SizedBox(height: 32),
-
           Text(
-            appState.language == 'id' ? 'Kategori Populer' : 'Popular Categories',
+            appState.language == 'id'
+                ? 'Kategori Populer'
+                : 'Popular Categories',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
           const SizedBox(height: 12),
           ...popularCategories.asMap().entries.map((entry) {
@@ -176,21 +189,28 @@ class _SearchScreenState extends State<SearchScreen> {
               leading: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.categoryColors[index % AppColors.categoryColors.length].withValues(alpha: 0.1),
+                  color: AppColors
+                      .categoryColors[index % AppColors.categoryColors.length]
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
                   Icons.category_rounded,
-                  color: AppColors.categoryColors[index % AppColors.categoryColors.length],
+                  color: AppColors
+                      .categoryColors[index % AppColors.categoryColors.length],
                 ),
               ),
               title: Text(category),
               trailing: Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 16,
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
               ),
-            ).animate().fadeIn(duration: 300.ms, delay: Duration(milliseconds: 300 + (index * 50)));
+            ).animate().fadeIn(
+                duration: 300.ms,
+                delay: Duration(milliseconds: 300 + (index * 50)));
           }),
         ],
       ),
@@ -219,14 +239,18 @@ class _SearchScreenState extends State<SearchScreen> {
           Text(
             isId ? 'Tidak ditemukan' : 'No results found',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
           const SizedBox(height: 8),
           Text(
-            isId ? 'Coba kata kunci lain atau periksa ejaan' : 'Try different keywords or check spelling',
+            isId
+                ? 'Coba kata kunci lain atau periksa ejaan'
+                : 'Try different keywords or check spelling',
             style: TextStyle(
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
             ),
           ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
         ],
@@ -241,7 +265,7 @@ class _SearchScreenState extends State<SearchScreen> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: Text(
-            appState.language == 'id' 
+            appState.language == 'id'
                 ? '${_searchResults.length} hasil ditemukan'
                 : '${_searchResults.length} results found',
             style: Theme.of(context).textTheme.bodyMedium,
@@ -261,7 +285,8 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildResultItem(BuildContext context, Book book, bool isDark, int index) {
+  Widget _buildResultItem(
+      BuildContext context, Book book, bool isDark, int index) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -290,7 +315,8 @@ class _SearchScreenState extends State<SearchScreen> {
               height: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: isDark ? AppColors.surfaceDark : AppColors.backgroundLight,
+                color:
+                    isDark ? AppColors.surfaceDark : AppColors.backgroundLight,
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -323,14 +349,17 @@ class _SearchScreenState extends State<SearchScreen> {
                     book.author,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.primaryBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -360,13 +389,16 @@ class _SearchScreenState extends State<SearchScreen> {
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 300.ms, delay: Duration(milliseconds: index * 50)).slideX(begin: 0.1);
+    )
+        .animate()
+        .fadeIn(duration: 300.ms, delay: Duration(milliseconds: index * 50))
+        .slideX(begin: 0.1);
   }
 
   String _formatPrice(int price) {
     return price.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        );
   }
 }

@@ -30,7 +30,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final isInCart = appState.isInCart(widget.book.id);
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       body: CustomScrollView(
         slivers: [
           // App Bar with Image
@@ -43,7 +44,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.7),
+                  color: (isDark ? Colors.black : Colors.white)
+                      .withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -55,14 +57,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             actions: [
               // Edit & Delete for owner only - must be logged in AND be the seller
-              if (appState.isLoggedIn && 
-                  widget.book.sellerId != null && 
+              if (appState.isLoggedIn &&
+                  widget.book.sellerId != null &&
                   widget.book.sellerId == appState.currentUser?.id)
                 PopupMenuButton<String>(
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.7),
+                      color: (isDark ? Colors.black : Colors.white)
+                          .withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -71,12 +74,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       color: isDark ? Colors.white : AppColors.textPrimaryLight,
                     ),
                   ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   onSelected: (value) {
                     if (value == 'edit') {
                       Navigator.push(
                         context,
-                        PageTransitions.slideUp(AddBookScreen(bookToEdit: widget.book)),
+                        PageTransitions.slideUp(
+                            AddBookScreen(bookToEdit: widget.book)),
                       );
                     } else if (value == 'delete') {
                       _showDeleteDialog(context, appState);
@@ -87,7 +92,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit_rounded, size: 20, color: AppColors.primaryBlue),
+                          Icon(Icons.edit_rounded,
+                              size: 20, color: AppColors.primaryBlue),
                           const SizedBox(width: 12),
                           Text(appState.tr('edit_book')),
                         ],
@@ -97,9 +103,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_rounded, size: 20, color: AppColors.error),
+                          Icon(Icons.delete_rounded,
+                              size: 20, color: AppColors.error),
                           const SizedBox(width: 12),
-                          Text(appState.tr('delete'), style: TextStyle(color: AppColors.error)),
+                          Text(appState.tr('delete'),
+                              style: TextStyle(color: AppColors.error)),
                         ],
                       ),
                     ),
@@ -117,7 +125,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.7),
+                    color: (isDark ? Colors.black : Colors.white)
+                        .withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Stack(
@@ -126,7 +135,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Icon(
                         Icons.shopping_bag_outlined,
                         size: 18,
-                        color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                        color:
+                            isDark ? Colors.white : AppColors.textPrimaryLight,
                       ),
                       if (appState.cartItemCount > 0)
                         Positioned(
@@ -138,10 +148,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               color: AppColors.error,
                               shape: BoxShape.circle,
                             ),
-                            constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                            constraints: const BoxConstraints(
+                                minWidth: 16, minHeight: 16),
                             child: Text(
-                              appState.cartItemCount > 9 ? '9+' : '${appState.cartItemCount}',
-                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                              appState.cartItemCount > 9
+                                  ? '9+'
+                                  : '${appState.cartItemCount}',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -158,20 +174,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   } else {
                     ToastHelper.showWarning(
                       context,
-                      appState.language == 'id' ? 'Login untuk menambah wishlist' : 'Login to add to wishlist',
+                      appState.language == 'id'
+                          ? 'Login untuk menambah wishlist'
+                          : 'Login to add to wishlist',
                     );
                   }
                 },
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.7),
+                    color: (isDark ? Colors.black : Colors.white)
+                        .withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    isWishlisted ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                    isWishlisted
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_outline_rounded,
                     size: 18,
-                    color: isWishlisted ? AppColors.error : (isDark ? Colors.white : AppColors.textPrimaryLight),
+                    color: isWishlisted
+                        ? AppColors.error
+                        : (isDark ? Colors.white : AppColors.textPrimaryLight),
                   ),
                 ),
               ),
@@ -187,7 +210,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       imageUrl: widget.book.imageUrl,
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) => Container(
-                        color: isDark ? AppColors.surfaceDark : AppColors.backgroundLight,
+                        color: isDark
+                            ? AppColors.surfaceDark
+                            : AppColors.backgroundLight,
                         child: Icon(
                           Icons.menu_book_rounded,
                           size: 80,
@@ -215,7 +240,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       top: 100,
                       left: 16,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [AppColors.error, Color(0xFFDC2626)],
@@ -241,8 +267,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           SliverToBoxAdapter(
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                color: isDark
+                    ? AppColors.backgroundDark
+                    : AppColors.backgroundLight,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,9 +285,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryBlue.withValues(alpha: 0.1),
+                                color: AppColors.primaryBlue
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -272,15 +303,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: _getConditionColor(widget.book.condition).withValues(alpha: 0.1),
+                                color: _getConditionColor(widget.book.condition)
+                                    .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 widget.book.condition.localizedLabel(isId),
                                 style: TextStyle(
-                                  color: _getConditionColor(widget.book.condition),
+                                  color:
+                                      _getConditionColor(widget.book.condition),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -294,21 +328,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         // Title
                         Text(
                           widget.book.title,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
 
                         const SizedBox(height: 8),
 
                         // Author
                         Text(
-                          appState.language == 'id' 
+                          appState.language == 'id'
                               ? 'oleh ${widget.book.author}'
                               : 'by ${widget.book.author}',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: isDark
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondaryLight,
+                                  ),
                         ),
 
                         const SizedBox(height: 16),
@@ -319,8 +359,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ...List.generate(5, (index) {
                               return Icon(
                                 index < widget.book.rating.floor()
-                                  ? Icons.star_rounded
-                                  : (index < widget.book.rating ? Icons.star_half_rounded : Icons.star_border_rounded),
+                                    ? Icons.star_rounded
+                                    : (index < widget.book.rating
+                                        ? Icons.star_half_rounded
+                                        : Icons.star_border_rounded),
                                 color: AppColors.warning,
                                 size: 20,
                               );
@@ -339,7 +381,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   ? '(${widget.book.reviewCount} ulasan)'
                                   : '(${widget.book.reviewCount} reviews)',
                               style: TextStyle(
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondaryLight,
                                 fontSize: 14,
                               ),
                             ),
@@ -366,7 +410,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 'Rp ${_formatPrice(widget.book.originalPrice.toInt())}',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: isDark ? AppColors.textTertiaryDark : AppColors.textTertiaryLight,
+                                  color: isDark
+                                      ? AppColors.textTertiaryDark
+                                      : AppColors.textTertiaryLight,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
@@ -383,17 +429,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                         // Description
                         Text(
-                          appState.language == 'id' ? 'Deskripsi' : 'Description',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          appState.language == 'id'
+                              ? 'Deskripsi'
+                              : 'Description',
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           widget.book.description,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            height: 1.6,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    height: 1.6,
+                                  ),
                         ),
 
                         const SizedBox(height: 24),
@@ -405,7 +455,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         const SizedBox(height: 24),
 
                         // Reviews Section
-                        _buildReviewsSection(isDark, appState).animate().fadeIn(duration: 300.ms, delay: 450.ms),
+                        _buildReviewsSection(isDark, appState)
+                            .animate()
+                            .fadeIn(duration: 300.ms, delay: 450.ms),
 
                         const SizedBox(height: 100),
                       ],
@@ -436,19 +488,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               if (!isInCart) ...[
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.cardDark : AppColors.backgroundLight,
+                    color:
+                        isDark ? AppColors.cardDark : AppColors.backgroundLight,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF30363D) : const Color(0xFFE2E8F0),
+                      color: isDark
+                          ? const Color(0xFF30363D)
+                          : const Color(0xFFE2E8F0),
                     ),
                   ),
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
+                        onPressed: _quantity > 1
+                            ? () => setState(() => _quantity--)
+                            : null,
                         icon: Icon(
                           Icons.remove_rounded,
-                          color: _quantity > 1 ? AppColors.primaryBlue : AppColors.textTertiaryLight,
+                          color: _quantity > 1
+                              ? AppColors.primaryBlue
+                              : AppColors.textTertiaryLight,
                         ),
                       ),
                       Padding(
@@ -462,10 +521,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: _quantity < widget.book.stock ? () => setState(() => _quantity++) : null,
+                        onPressed: _quantity < widget.book.stock
+                            ? () => setState(() => _quantity++)
+                            : null,
                         icon: Icon(
                           Icons.add_rounded,
-                          color: _quantity < widget.book.stock ? AppColors.primaryBlue : AppColors.textTertiaryLight,
+                          color: _quantity < widget.book.stock
+                              ? AppColors.primaryBlue
+                              : AppColors.textTertiaryLight,
                         ),
                       ),
                     ],
@@ -488,38 +551,49 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       if (!appState.isLoggedIn) {
                         ToastHelper.showWarning(
                           context,
-                          appState.language == 'id' ? 'Login untuk memesan buku' : 'Login to order book',
+                          appState.language == 'id'
+                              ? 'Login untuk memesan buku'
+                              : 'Login to order book',
                         );
                         return;
                       }
                       appState.addToCart(widget.book, quantity: _quantity);
                       ToastHelper.showSuccess(
                         context,
-                        appState.language == 'id' 
+                        appState.language == 'id'
                             ? '${widget.book.title} ditambahkan ke keranjang'
                             : '${widget.book.title} added to cart',
                       );
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isInCart ? const Color(0xFF10B981) : AppColors.primaryBlue,
+                    backgroundColor: isInCart
+                        ? const Color(0xFF10B981)
+                        : AppColors.primaryBlue,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        isInCart ? Icons.shopping_bag_rounded : Icons.add_shopping_cart_rounded,
+                        isInCart
+                            ? Icons.shopping_bag_rounded
+                            : Icons.add_shopping_cart_rounded,
                         color: Colors.white,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        isInCart 
-                            ? (appState.language == 'id' ? 'Lihat Keranjang' : 'View Cart')
-                            : (appState.language == 'id' ? 'Tambah ke Keranjang' : 'Add to Cart'),
+                        isInCart
+                            ? (appState.language == 'id'
+                                ? 'Lihat Keranjang'
+                                : 'View Cart')
+                            : (appState.language == 'id'
+                                ? 'Tambah ke Keranjang'
+                                : 'Add to Cart'),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -556,15 +630,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         children: [
           _buildDetailRow('ISBN', widget.book.isbn, isDark),
           _buildDivider(isDark),
-          _buildDetailRow(isId ? 'Penerbit' : 'Publisher', widget.book.publisher, isDark),
+          _buildDetailRow(
+              isId ? 'Penerbit' : 'Publisher', widget.book.publisher, isDark),
           _buildDivider(isDark),
-          _buildDetailRow(isId ? 'Tahun' : 'Year', widget.book.year.toString(), isDark),
+          _buildDetailRow(
+              isId ? 'Tahun' : 'Year', widget.book.year.toString(), isDark),
           _buildDivider(isDark),
-          _buildDetailRow(isId ? 'Halaman' : 'Pages', isId ? '${widget.book.pages} halaman' : '${widget.book.pages} pages', isDark),
+          _buildDetailRow(
+              isId ? 'Halaman' : 'Pages',
+              isId
+                  ? '${widget.book.pages} halaman'
+                  : '${widget.book.pages} pages',
+              isDark),
           _buildDivider(isDark),
-          _buildDetailRow(isId ? 'Bahasa' : 'Language', widget.book.language, isDark),
+          _buildDetailRow(
+              isId ? 'Bahasa' : 'Language', widget.book.language, isDark),
           _buildDivider(isDark),
-          _buildDetailRow(isId ? 'Stok' : 'Stock', isId ? '${widget.book.stock} tersedia' : '${widget.book.stock} available', isDark),
+          _buildDetailRow(
+              isId ? 'Stok' : 'Stock',
+              isId
+                  ? '${widget.book.stock} tersedia'
+                  : '${widget.book.stock} available',
+              isDark),
         ],
       ),
     );
@@ -579,7 +666,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           Text(
             label,
             style: TextStyle(
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
             ),
           ),
           Text(
@@ -596,9 +685,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Widget _buildDivider(bool isDark) {
     return Divider(
-      color: isDark 
-        ? AppColors.textTertiaryDark.withValues(alpha: 0.2)
-        : AppColors.textTertiaryLight.withValues(alpha: 0.2),
+      color: isDark
+          ? AppColors.textTertiaryDark.withValues(alpha: 0.2)
+          : AppColors.textTertiaryLight.withValues(alpha: 0.2),
     );
   }
 
@@ -648,14 +737,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     Icon(
                       Icons.location_on_rounded,
                       size: 14,
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondaryLight,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       widget.book.sellerLocation ?? '',
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
                       ),
                     ),
                   ],
@@ -665,7 +758,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ),
           TextButton(
             onPressed: () {},
-            child: Text(appState.language == 'id' ? 'Kunjungi Toko' : 'Visit Store'),
+            child: Text(
+                appState.language == 'id' ? 'Kunjungi Toko' : 'Visit Store'),
           ),
         ],
       ),
@@ -687,9 +781,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   String _formatPrice(int price) {
     return price.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        );
   }
 
   Widget _buildReviewsSection(bool isDark, AppState appState) {
@@ -717,7 +811,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               Icon(Icons.star_rounded, color: Colors.amber[600], size: 24),
               const SizedBox(width: 8),
               Text(
-                'Reviews',
+                appState.language == 'id' ? 'Ulasan' : 'Reviews',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -727,20 +821,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               const Spacer(),
               if (reviews.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.star_rounded, color: Colors.amber[600], size: 16),
+                      Icon(Icons.star_rounded,
+                          color: Colors.amber[600], size: 16),
                       const SizedBox(width: 4),
                       Text(
                         averageRating.toStringAsFixed(1),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                          color: isDark
+                              ? Colors.white
+                              : AppColors.textPrimaryLight,
                         ),
                       ),
                     ],
@@ -762,7 +860,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Belum ada review',
+                      appState.language == 'id'
+                          ? 'Belum ada ulasan'
+                          : 'No reviews yet',
                       style: TextStyle(
                         color: isDark ? Colors.grey[600] : Colors.grey[500],
                         fontSize: 14,
@@ -779,7 +879,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               itemCount: reviews.length,
               separatorBuilder: (context, index) => Divider(
                 height: 24,
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+                color: (isDark ? Colors.white : Colors.black)
+                    .withValues(alpha: 0.1),
               ),
               itemBuilder: (context, index) {
                 final review = reviews[index];
@@ -797,7 +898,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       children: [
                         CircleAvatar(
                           radius: 18,
-                          backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+                          backgroundColor:
+                              AppColors.primaryBlue.withValues(alpha: 0.1),
                           child: Text(
                             userName[0].toUpperCase(),
                             style: const TextStyle(
@@ -815,7 +917,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 userName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                                  color: isDark
+                                      ? Colors.white
+                                      : AppColors.textPrimaryLight,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -824,7 +928,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   Row(
                                     children: List.generate(5, (i) {
                                       return Icon(
-                                        i < rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                                        i < rating
+                                            ? Icons.star_rounded
+                                            : Icons.star_outline_rounded,
                                         size: 14,
                                         color: Colors.amber[600],
                                       );
@@ -835,7 +941,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     _formatDate(createdAt),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                      color: isDark
+                                          ? Colors.grey[500]
+                                          : Colors.grey[600],
                                     ),
                                   ),
                                 ],
@@ -867,19 +975,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
+    // Get language from context - we'll use a simple approach
+    final isId = true; // Will be replaced with proper context access
 
     if (difference.inDays == 0) {
-      return 'Hari ini';
+      return 'Today';
     } else if (difference.inDays == 1) {
-      return 'Kemarin';
+      return 'Yesterday';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} hari lalu';
+      return '${difference.inDays} days ago';
     } else if (difference.inDays < 30) {
-      return '${(difference.inDays / 7).floor()} minggu lalu';
+      return '${(difference.inDays / 7).floor()} weeks ago';
     } else if (difference.inDays < 365) {
-      return '${(difference.inDays / 30).floor()} bulan lalu';
+      return '${(difference.inDays / 30).floor()} months ago';
     } else {
-      return '${(difference.inDays / 365).floor()} tahun lalu';
+      return '${(difference.inDays / 365).floor()} years ago';
     }
   }
 
@@ -887,7 +997,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final isDark = appState.isDarkMode;
     final cardColor = isDark ? const Color(0xFF161B22) : Colors.white;
     final textPrimary = isDark ? Colors.white : const Color(0xFF1E293B);
-    final textSecondary = isDark ? const Color(0xFF8B949E) : const Color(0xFF64748B);
+    final textSecondary =
+        isDark ? const Color(0xFF8B949E) : const Color(0xFF64748B);
 
     showDialog(
       context: context,
@@ -904,16 +1015,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 color: AppColors.error.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.delete_rounded, color: AppColors.error, size: 32),
+              child: const Icon(Icons.delete_rounded,
+                  color: AppColors.error, size: 32),
             ),
             const SizedBox(height: 20),
             Text(
               appState.tr('delete_book'),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary),
             ),
             const SizedBox(height: 8),
             Text(
-              appState.language == 'id' 
+              appState.language == 'id'
                   ? 'Apakah Anda yakin ingin menghapus "${widget.book.title}"?'
                   : 'Are you sure you want to delete "${widget.book.title}"?',
               textAlign: TextAlign.center,
@@ -925,8 +1040,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 Expanded(
                   child: TextButton(
                     onPressed: () => Navigator.pop(ctx),
-                    style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                    child: Text(appState.tr('cancel'), style: TextStyle(color: textSecondary, fontWeight: FontWeight.w600)),
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14)),
+                    child: Text(appState.tr('cancel'),
+                        style: TextStyle(
+                            color: textSecondary, fontWeight: FontWeight.w600)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -937,17 +1055,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       await appState.deleteBook(widget.book.id);
                       if (context.mounted) {
                         Navigator.pop(context);
-                        ToastHelper.showSuccess(context, appState.tr('book_deleted'));
+                        ToastHelper.showSuccess(
+                            context, appState.tr('book_deleted'));
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.error,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                       elevation: 0,
                     ),
-                    child: Text(appState.tr('delete'), style: const TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(appState.tr('delete'),
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],
