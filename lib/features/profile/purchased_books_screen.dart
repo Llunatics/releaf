@@ -77,7 +77,9 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Buku yang Dibeli',
+              appState.language == 'id'
+                  ? 'Buku yang Dibeli'
+                  : 'Purchased Books',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -85,7 +87,9 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
               ),
             ),
             Text(
-              '${purchasedBooks.length} buku',
+              appState.language == 'id'
+                  ? '${purchasedBooks.length} buku'
+                  : '${purchasedBooks.length} books',
               style: TextStyle(
                 fontSize: 12,
                 color: textSecondary,
@@ -103,10 +107,11 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildFilterChip('Semua', 'all', purchasedBooks.length, isDark),
+                _buildFilterChip(appState.language == 'id' ? 'Semua' : 'All',
+                    'all', purchasedBooks.length, isDark),
                 const SizedBox(width: 8),
                 _buildFilterChip(
-                  'Selesai',
+                  appState.language == 'id' ? 'Selesai' : 'Completed',
                   'completed',
                   appState.transactions
                       .where((t) => t.status == TransactionStatus.completed)
@@ -115,7 +120,7 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
                 ),
                 const SizedBox(width: 8),
                 _buildFilterChip(
-                  'Dalam Proses',
+                  appState.language == 'id' ? 'Dalam Proses' : 'In Progress',
                   'pending',
                   appState.transactions
                       .where((t) =>
@@ -126,7 +131,7 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
                 ),
                 const SizedBox(width: 8),
                 _buildFilterChip(
-                  'Dibatalkan',
+                  appState.language == 'id' ? 'Dibatalkan' : 'Cancelled',
                   'cancelled',
                   appState.transactions
                       .where((t) => t.status == TransactionStatus.cancelled)
@@ -413,13 +418,18 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
               children: [
                 Icon(Icons.calendar_today, size: 16, color: textSecondary),
                 const SizedBox(width: 6),
-                Text(
-                  'Dibeli: ${DateFormat('dd MMM yyyy, HH:mm').format(purchaseDate)}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: textSecondary,
-                  ),
-                ),
+                Builder(builder: (context) {
+                  final appState = AppStateProvider.of(context);
+                  return Text(
+                    appState.language == 'id'
+                        ? 'Dibeli: ${DateFormat('dd MMM yyyy, HH:mm').format(purchaseDate)}'
+                        : 'Purchased: ${DateFormat('dd MMM yyyy, HH:mm').format(purchaseDate)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: textSecondary,
+                    ),
+                  );
+                }),
               ],
             ),
 
@@ -446,14 +456,19 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
                         const Icon(Icons.rate_review,
                             size: 16, color: Color(0xFFFBBF24)),
                         const SizedBox(width: 6),
-                        Text(
-                          'Review Anda',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: textPrimary,
-                          ),
-                        ),
+                        Builder(builder: (context) {
+                          final appState = AppStateProvider.of(context);
+                          return Text(
+                            appState.language == 'id'
+                                ? 'Review Anda'
+                                : 'Your Review',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: textPrimary,
+                            ),
+                          );
+                        }),
                         const Spacer(),
                         if (transaction.rating != null)
                           Row(
@@ -494,45 +509,53 @@ class _PurchasedBooksScreenState extends State<PurchasedBooksScreen> {
   }
 
   Widget _buildEmptyState(bool isDark, Color textPrimary, Color textSecondary) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF1E3A5F).withValues(alpha: 0.3)
-                  : const Color(0xFF3B82F6).withValues(alpha: 0.08),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.shopping_bag_outlined,
-              size: 64,
-              color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
-            ),
-          ).animate().scale(duration: 400.ms),
-          const SizedBox(height: 24),
-          Text(
-            'Belum Ada Pembelian',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: textPrimary,
-            ),
-          ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
-          const SizedBox(height: 8),
-          Text(
-            'Mulai jelajahi buku dan lakukan pembelian pertamamu',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: textSecondary,
-            ),
-          ).animate().fadeIn(duration: 300.ms, delay: 300.ms),
-        ],
-      ),
-    );
+    return Builder(builder: (context) {
+      final appState = AppStateProvider.of(context);
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF1E3A5F).withValues(alpha: 0.3)
+                    : const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.shopping_bag_outlined,
+                size: 64,
+                color:
+                    isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+              ),
+            ).animate().scale(duration: 400.ms),
+            const SizedBox(height: 24),
+            Text(
+              appState.language == 'id'
+                  ? 'Belum Ada Pembelian'
+                  : 'No Purchases Yet',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: textPrimary,
+              ),
+            ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+            const SizedBox(height: 8),
+            Text(
+              appState.language == 'id'
+                  ? 'Mulai jelajahi buku dan lakukan pembelian pertamamu'
+                  : 'Start exploring books and make your first purchase',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: textSecondary,
+              ),
+            ).animate().fadeIn(duration: 300.ms, delay: 300.ms),
+          ],
+        ),
+      );
+    });
   }
 
   Color _getStatusColor(TransactionStatus status) {

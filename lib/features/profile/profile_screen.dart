@@ -180,13 +180,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
 
                   // Quick Access Section
-                  _buildSectionTitle('Akses Cepat', textPrimary),
+                  _buildSectionTitle(
+                      appState.language == 'id'
+                          ? 'Akses Cepat'
+                          : 'Quick Access',
+                      textPrimary),
                   const SizedBox(height: 14),
 
                   _buildSettingsCard([
                     _buildNavigationItem(
                       icon: Icons.shopping_bag_rounded,
-                      title: 'Buku yang Dibeli',
+                      title: appState.language == 'id'
+                          ? 'Buku yang Dibeli'
+                          : 'Purchased Books',
                       subtitle: appState.language == 'id'
                           ? 'Lihat semua buku yang sudah Anda beli'
                           : 'View all books you have purchased',
@@ -348,7 +354,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: appState.language == 'id'
                           ? 'Tentang Releaf'
                           : 'About Releaf',
-                      subtitle: '${appState.tr('version')} 1.0.0',
+                      subtitle: '${appState.tr('version')} 2.0.1',
                       cardColor: cardColor,
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
@@ -1116,6 +1122,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showHelpCenter(BuildContext context, bool isDark, Color textPrimary,
       Color textSecondary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -1137,20 +1145,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(2))),
             ),
             const SizedBox(height: 24),
-            Text('Help Center',
+            Text(isId ? 'Pusat Bantuan' : 'Help Center',
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: textPrimary)),
             const SizedBox(height: 24),
-            _buildHelpOption(Icons.chat_bubble_outline_rounded, 'Chat with Us',
-                'Get instant help', textPrimary, textSecondary),
-            _buildHelpOption(Icons.email_outlined, 'Email Support',
-                'support@releaf.com', textPrimary, textSecondary),
-            _buildHelpOption(Icons.phone_outlined, 'Call Us',
-                '+62 21 1234 5678', textPrimary, textSecondary),
-            _buildHelpOption(Icons.help_outline_rounded, 'FAQs',
-                'Find answers to common questions', textPrimary, textSecondary),
+            _buildHelpOption(
+                Icons.chat_bubble_outline_rounded,
+                isId ? 'Chat dengan Kami' : 'Chat with Us',
+                isId ? 'Dapatkan bantuan langsung' : 'Get instant help',
+                textPrimary,
+                textSecondary),
+            _buildHelpOption(
+                Icons.email_outlined,
+                isId ? 'Email Dukungan' : 'Email Support',
+                'support@releaf.com',
+                textPrimary,
+                textSecondary),
+            _buildHelpOption(
+                Icons.phone_outlined,
+                isId ? 'Hubungi Kami' : 'Call Us',
+                '+62 21 1234 5678',
+                textPrimary,
+                textSecondary),
+            _buildHelpOption(
+                Icons.help_outline_rounded,
+                isId ? 'FAQ' : 'FAQs',
+                isId
+                    ? 'Temukan jawaban pertanyaan umum'
+                    : 'Find answers to common questions',
+                textPrimary,
+                textSecondary),
             const SizedBox(height: 16),
           ],
         ),
@@ -1179,6 +1205,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showPrivacyPolicy(
       BuildContext context, bool isDark, Color textPrimary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showModalBottomSheet(
       context: context,
       backgroundColor: cardColor,
@@ -1205,7 +1233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         borderRadius: BorderRadius.circular(2))),
               ),
               const SizedBox(height: 24),
-              Text('Privacy Policy',
+              Text(isId ? 'Kebijakan Privasi' : 'Privacy Policy',
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -1215,7 +1243,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Text(
-                    '''Last updated: December 2024
+                    isId
+                        ? '''Terakhir diperbarui: Desember 2024
+
+Privasi Anda penting bagi kami. Kebijakan Privasi ini menjelaskan bagaimana Releaf mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda.
+
+1. Informasi yang Kami Kumpulkan
+Kami mengumpulkan informasi yang Anda berikan langsung kepada kami, seperti nama, alamat email, dan informasi pembayaran saat Anda membuat akun atau melakukan pembelian.
+
+2. Bagaimana Kami Menggunakan Informasi Anda
+Kami menggunakan informasi yang kami kumpulkan untuk menyediakan, memelihara, dan meningkatkan layanan kami, memproses transaksi, dan mengirimkan informasi terkait.
+
+3. Berbagi Informasi
+Kami tidak menjual, memperdagangkan, atau mentransfer informasi pribadi Anda ke pihak luar tanpa persetujuan Anda.
+
+4. Keamanan Data
+Kami menerapkan langkah-langkah keamanan yang sesuai untuk melindungi informasi pribadi Anda dari akses tidak sah, perubahan, pengungkapan, atau penghancuran.
+
+5. Hak Anda
+Anda memiliki hak untuk mengakses, memperbarui, atau menghapus informasi pribadi Anda kapan saja melalui pengaturan akun Anda.
+
+6. Hubungi Kami
+Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami di privacy@releaf.com.'''
+                        : '''Last updated: December 2024
 
 Your privacy is important to us. This Privacy Policy explains how Releaf collects, uses, and protects your personal information.
 
@@ -1250,6 +1300,8 @@ If you have any questions about this Privacy Policy, please contact us at privac
 
   void _showAboutDialog(BuildContext context, bool isDark, Color textPrimary,
       Color textSecondary, Color cardColor) {
+    final appState = AppStateProvider.of(context);
+    final isId = appState.language == 'id';
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1263,11 +1315,7 @@ If you have any questions about this Privacy Policy, please contact us at privac
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
-                ),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -1277,8 +1325,25 @@ If you have any questions about this Privacy Policy, please contact us at privac
                   ),
                 ],
               ),
-              child:
-                  const Icon(Icons.eco_rounded, size: 44, color: Colors.white),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(
+                    Icons.auto_stories_rounded,
+                    size: 36,
+                    color: Color(0xFF1E3A5F),
+                  ),
+                  Positioned(
+                    top: 16,
+                    right: 18,
+                    child: Icon(
+                      Icons.eco_rounded,
+                      size: 16,
+                      color: const Color(0xFF4ADE80),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             Text('Releaf',
@@ -1287,11 +1352,13 @@ If you have any questions about this Privacy Policy, please contact us at privac
                     fontWeight: FontWeight.w700,
                     color: textPrimary)),
             const SizedBox(height: 6),
-            Text('Version 1.0.0',
+            Text(isId ? 'Versi 2.0.1' : 'Version 2.0.1',
                 style: TextStyle(color: textSecondary, fontSize: 14)),
             const SizedBox(height: 16),
             Text(
-              'Preloved Books Marketplace\nGive books a second life 📚',
+              isId
+                  ? 'Marketplace Buku Preloved\nBerikan buku kehidupan kedua 📚'
+                  : 'Preloved Books Marketplace\nGive books a second life 📚',
               textAlign: TextAlign.center,
               style: TextStyle(color: textSecondary, height: 1.5),
             ),
@@ -1307,8 +1374,8 @@ If you have any questions about this Privacy Policy, please contact us at privac
                       borderRadius: BorderRadius.circular(12)),
                   elevation: 0,
                 ),
-                child: const Text('Close',
-                    style: TextStyle(
+                child: Text(isId ? 'Tutup' : 'Close',
+                    style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.w600)),
               ),
             ),
