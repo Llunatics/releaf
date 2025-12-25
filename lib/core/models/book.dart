@@ -247,6 +247,15 @@ class Book {
   factory Book.fromSupabase(Map<String, dynamic> json) {
     final profiles = json['profiles'] as Map<String, dynamic>?;
     
+    // Parse reviews from joined data
+    List<Map<String, dynamic>>? reviewsList;
+    if (json['book_reviews'] != null) {
+      final reviewsData = json['book_reviews'];
+      if (reviewsData is List) {
+        reviewsList = reviewsData.cast<Map<String, dynamic>>();
+      }
+    }
+    
     return Book(
       id: json['id'] ?? '',
       title: json['title'] ?? '',
@@ -269,6 +278,7 @@ class Book {
       sellerName: profiles?['full_name'],
       sellerLocation: null,
       sellerId: json['seller_id'],
+      reviews: reviewsList,
     );
   }
 

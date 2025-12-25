@@ -527,13 +527,13 @@ class AppState extends ChangeNotifier {
           rating: rating,
         );
         
-        // Add review to the book if rating and comment provided
-        if (rating != null && review != null && review.isNotEmpty) {
+        // Add review to the book if rating provided
+        if (rating != null) {
           for (var item in transaction.items) {
             await SupabaseService.instance.addBookReview(
               bookId: item.book.id,
               rating: rating,
-              comment: review,
+              comment: review ?? '',
             );
           }
           
@@ -799,6 +799,42 @@ class AppState extends ChangeNotifier {
       return _books.firstWhere((book) => book.id == id);
     } catch (e) {
       return null;
+    }
+  }
+
+  // ==================== USER PROFILE ====================
+
+  /// Upload user avatar
+  Future<String?> uploadAvatar(String filePath) async {
+    if (_currentUser == null) return null;
+    
+    try {
+      final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final avatarUrl = await SupabaseService.instance.uploadAvatar(filePath, fileName);
+      
+      // Reload profile to get updated avatar
+      await _loadUserProfile();
+      notifyListeners();
+      
+      return avatarUrl;
+    } catch (e) {
+      debugPrint('Error uploading avatar: $e');
+      return null;
+    }
+  }
+
+  /// Delete user avatar
+  Future<void> deleteAvatar() async {
+    if (_currentUser == null) return;
+    
+    try {
+      await SupabaseService.instance.deleteAvatar();
+      
+      // Reload profile
+      await _loadUserProfile();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting avatar: $e');
     }
   }
 

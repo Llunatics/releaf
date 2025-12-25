@@ -158,7 +158,7 @@ class SupabaseService {
   }) async {
     var query = client
         .from('books')
-        .select('*, profiles!books_seller_id_fkey(full_name, avatar_url)')
+        .select('*, profiles!books_seller_id_fkey(full_name, avatar_url), book_reviews(id, user_id, user_name, rating, comment, created_at, user_avatar)')
         .eq('is_active', true);
 
     if (category != null && category.isNotEmpty) {
@@ -177,7 +177,7 @@ class SupabaseService {
   Future<Map<String, dynamic>?> getBook(String bookId) async {
     final response = await client
         .from('books')
-        .select('*, profiles!books_seller_id_fkey(full_name, avatar_url)')
+        .select('*, profiles!books_seller_id_fkey(full_name, avatar_url), book_reviews(id, user_id, user_name, rating, comment, created_at, user_avatar)')
         .eq('id', bookId)
         .single();
     return response;
@@ -554,6 +554,61 @@ class SupabaseService {
     return client.storage
         .from(SupabaseConfig.bookImagesBucket)
         .getPublicUrl(path);
+  }
+
+  /// Upload user avatar
+  Future<String> uploadAvatar(String filePath, String fileName) async {
+    final userId = currentUser?.id;
+    if (userId == null) throw Exception('User not logged in');
+    
+    final path = 'avatars/$userId/$fileName';
+    
+    final file = File(filePath);
+    await client.storage
+        .from('avatars')
+        .upload(path, file, fileOptions: const FileOptions(upsert: true));
+    
+    final publicUrl = client.storage
+        .from('avatars')
+        .getPublicUrl(path);
+    
+    // Update user profile with avatar URL
+    await client
+        .from('profiles')
+        .update({'avatar_url': publicUrl})
+        .eq('id', userId);
+    
+    return publicUrl;
+  }
+
+  /// Delete user avatar
+  Future<void> deleteAvatar() async {
+    final userId = currentUser?.id;
+    if (userId == null) throw Exception('User not logged in');
+    
+    // Get current avatar path from profile
+    final profile = await getProfile(userId);
+    final avatarUrl = profile?['avatar_url'] as String?;
+    
+    if (avatarUrl != null && avatarUrl.isNotEmpty) {
+      // Extract path from URL
+      final uri = Uri.parse(avatarUrl);
+      final pathSegments = uri.pathSegments;
+      if (pathSegments.length >= 4) {
+        final path = pathSegments.sublist(3).join('/');
+        
+        // Delete from storage
+        await client.storage
+            .from('avatars')
+            .remove([path]);
+      }
+      
+      // Remove from profile
+      await client
+          .from('profiles')
+          .update({'avatar_url': null})
+          .eq('id', userId);
+    }
   }
 
   // ==================== DASHBOARD ANALYTICS ====================

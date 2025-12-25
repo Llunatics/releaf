@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/models/book.dart';
 import '../../core/models/transaction.dart';
 import '../../core/providers/app_state.dart';
@@ -57,29 +59,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 20),
-                      // Avatar - Clean circle with subtle border
-                      Container(
-                        width: 88,
-                        height: 88,
-                        decoration: BoxDecoration(
-                          color: isDark 
-                              ? const Color(0xFF1E3A5F).withValues(alpha: 0.3)
-                              : const Color(0xFF3B82F6).withValues(alpha: 0.08),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isDark 
-                                ? const Color(0xFF3B82F6).withValues(alpha: 0.3)
-                                : const Color(0xFF3B82F6).withValues(alpha: 0.2),
-                            width: 2,
+                      // Avatar - Clean circle with subtle border and edit button
+                      Stack(
+                        children: [
+                          Container(
+                            width: 88,
+                            height: 88,
+                            decoration: BoxDecoration(
+                              color: isDark 
+                                  ? const Color(0xFF1E3A5F).withValues(alpha: 0.3)
+                                  : const Color(0xFF3B82F6).withValues(alpha: 0.08),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark 
+                                    ? const Color(0xFF3B82F6).withValues(alpha: 0.3)
+                                    : const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: appState.userProfile?['avatar_url'] != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: appState.userProfile!['avatar_url'],
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) => Icon(
+                                        Icons.person_rounded,
+                                        size: 44,
+                                        color: isDark 
+                                            ? const Color(0xFF60A5FA)
+                                            : const Color(0xFF3B82F6),
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.person_rounded,
+                                      size: 44,
+                                      color: isDark 
+                                          ? const Color(0xFF60A5FA)
+                                          : const Color(0xFF3B82F6),
+                                    ),
+                            ),
                           ),
-                        ),
-                        child: Icon(
-                          Icons.person_rounded,
-                          size: 44,
-                          color: isDark 
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF3B82F6),
-                        ),
+                          if (appState.isLoggedIn)
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => _showAvatarOptions(context, appState, isDark),
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF3B82F6),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isDark ? const Color(0xFF121212) : Colors.white,
+                                        width: 2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.2),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt_rounded,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       // Name
@@ -2588,5 +2652,286 @@ If you have any questions about this Privacy Policy, please contact us at privac
         ),
       ),
     );
+  }
+
+  // Method untuk menampilkan opsi avatar
+  void _showAvatarOptions(BuildContext context, AppState appState, bool isDark) {
+    final textPrimary = isDark ? Colors.white : const Color(0xFF1E293B);
+    final textSecondary = isDark ? const Color(0xFF8B949E) : const Color(0xFF64748B);
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF161B22) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF30363D) : const Color(0xFFE2E8F0),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Pilih Avatar',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: textPrimary,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF3B82F6)),
+              ),
+              title: Text('Ambil Foto', style: TextStyle(color: textPrimary)),
+              subtitle: Text('Gunakan kamera', style: TextStyle(color: textSecondary, fontSize: 12)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickAndUploadAvatar(context, appState, ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.photo_library_rounded, color: Color(0xFF10B981)),
+              ),
+              title: Text('Pilih dari Galeri', style: TextStyle(color: textPrimary)),
+              subtitle: Text('Pilih foto yang ada', style: TextStyle(color: textSecondary, fontSize: 12)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickAndUploadAvatar(context, appState, ImageSource.gallery);
+              },
+            ),
+            if (appState.userProfile?['avatar_url'] != null)
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444)),
+                ),
+                title: Text('Hapus Avatar', style: TextStyle(color: textPrimary)),
+                subtitle: Text('Kembali ke default', style: TextStyle(color: textSecondary, fontSize: 12)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _deleteAvatar(context, appState);
+                },
+              ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Method untuk pick dan upload avatar
+  Future<void> _pickAndUploadAvatar(BuildContext context, AppState appState, ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 500,
+        maxHeight: 500,
+        imageQuality: 85,
+      );
+
+      if (image == null) return;
+
+      // Show loading
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: appState.isDarkMode ? const Color(0xFF161B22) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      appState.isDarkMode ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Mengupload avatar...',
+                    style: TextStyle(
+                      color: appState.isDarkMode ? Colors.white : const Color(0xFF1E293B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Upload avatar
+      final avatarUrl = await appState.uploadAvatar(image.path);
+
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading
+
+        if (avatarUrl != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle_rounded, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('Avatar berhasil diupdate!'),
+                ],
+              ),
+              backgroundColor: const Color(0xFF10B981),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.error_outline_rounded, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('Gagal upload avatar'),
+                ],
+              ),
+              backgroundColor: const Color(0xFFEF4444),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading if still open
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Error: ${e.toString()}')),
+              ],
+            ),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  // Method untuk delete avatar
+  Future<void> _deleteAvatar(BuildContext context, AppState appState) async {
+    try {
+      // Show loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: appState.isDarkMode ? const Color(0xFF161B22) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    appState.isDarkMode ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Menghapus avatar...',
+                  style: TextStyle(
+                    color: appState.isDarkMode ? Colors.white : const Color(0xFF1E293B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await appState.deleteAvatar();
+
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle_rounded, color: Colors.white),
+                SizedBox(width: 12),
+                Text('Avatar berhasil dihapus!'),
+              ],
+            ),
+            backgroundColor: const Color(0xFF10B981),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Error: ${e.toString()}')),
+              ],
+            ),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+    }
   }
 }
